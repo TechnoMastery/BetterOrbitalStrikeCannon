@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "betterosc",
+  "version": "${version}",
+  "name": "betterOSC",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/betterosc/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "net.minheur.betterosc.Betterosc"
+    ]
+  },
+  "mixins": [
+    "betterosc.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
