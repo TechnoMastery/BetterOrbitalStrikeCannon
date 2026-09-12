@@ -19,6 +19,7 @@ public final class IllegalTankItems {
     }
 
     public static boolean isItemAllowed(ItemStack stack) {
+        if (stack.isEmpty()) return false;
         if (TankHandler.isTank(stack)) return false;
         if (illegalItems.contains(stack.getItem())) return false;
 
