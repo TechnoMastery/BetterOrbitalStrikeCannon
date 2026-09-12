@@ -46,7 +46,7 @@ public final class TankOperationHandler {
     }
 
     public static ItemStack getTankContent(ItemStack tank) {
-        if (!TankHandler.isTank(tank)) throw new IllegalArgumentException("Incrementing on non-tank item!");
+        if (!TankHandler.isTank(tank)) throw new IllegalArgumentException("Getting content on non-tank item!");
 
         UUID uuid = TankHandler.getTankUUID(tank);
         TankContent content = TankHandler.getTanks().get(uuid);
