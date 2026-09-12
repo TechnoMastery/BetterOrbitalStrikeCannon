@@ -10,6 +10,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 public final class ConfigHandler {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -52,6 +53,12 @@ public final class ConfigHandler {
     }
 
     public static class ConfigData {
+        // illegal tank
+        public List<String> illegalTanksItems = List.of(
+                "minecraft:bedrock", "minecraft:barrier", "minecraft:command_block", "minecraft:structure_block",
+                "minecraft:chain_command_block", "minecraft:repeat_command_block"
+        );
+
         public double rodCastDelay = 0.75f;
 
         // railgun
