@@ -64,4 +64,21 @@ public final class TankOperationHandler {
         return content.amount();
     }
 
+    public static boolean getIsSameItem(ItemStack ref, ItemStack target) {
+        if (ref.isEmpty() || target.isEmpty()) return false;
+        if (ref.getMaxCount() != target.getMaxCount()) return false;
+
+        ItemStack refCopy = ref.copy();
+        ItemStack targetCopy = target.copy();
+
+        refCopy.setCount(1);
+        targetCopy.setCount(1);
+
+        return ItemStack.areEqual(refCopy, targetCopy);
+    }
+    public static boolean canItemGoInTank(ItemStack tank, ItemStack target) {
+        ItemStack tankContent = getTankContent(tank);
+        return getIsSameItem(tankContent, target);
+    }
+
 }
