@@ -3,10 +3,14 @@ package net.minheur.betterosc.tank;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.LongArgumentType;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.minecraft.command.argument.UuidArgumentType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
+import net.minheur.betterosc.CommandRegister;
+
+import java.util.UUID;
 
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
@@ -175,6 +179,24 @@ public final class TankCommands {
 
                                         return 1;
                                     }))
+                            )
+
+                            .then(literal("admin").requires(CommandRegister::isOpped)
+                                    .then(literal("adminGiveTank").then(argument("uuid", UuidArgumentType.uuid())
+                                            .executes(source -> {
+                                                if (!(source.getSource().getEntity() instanceof ServerPlayerEntity user)) return 0;
+                                                UUID targetTank = UuidArgumentType.getUuid(source, "uuid");
+
+                                                if (!TankHandler.getTanks().containsKey(targetTank)) {
+                                                    source.getSource().sendError(Text.literal("This tank doesn't exists!"));
+                                                    return 0;
+                                                }
+
+                                                ItemStack tank = TankHandler.buildTankFromUUID(targetTank);
+                                                if (!user.giveItemStack(tank)) user.dropItem(tank, true);
+                                                return 1;
+                                            })
+                                    ))
                             )
             );
         });
