@@ -6,6 +6,7 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Hand;
+import net.minheur.betterosc.tank.TankCommands;
 
 public final class Betterosc implements ModInitializer {
 
@@ -22,6 +23,7 @@ public final class Betterosc implements ModInitializer {
         });
 
         CommandRegister.register();
+        TankCommands.register();
     }
 
     public static void breakFishingRod(ServerPlayerEntity player, Hand hand, ItemStack stack) {
