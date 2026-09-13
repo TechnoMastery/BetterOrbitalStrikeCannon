@@ -1,7 +1,6 @@
 package net.minheur.betterosc.tank;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -25,17 +24,21 @@ public final class TankOperationHandler {
 
         return OperationResults.SUCCESS;
     }
-    public static boolean safeIncrement(ItemStack tank, ItemStack target, Consumer<ItemStack> replaceTarget) {
+    public static boolean safeIncrement(ItemStack tank, ItemStack target, Consumer<ItemStack> replaceTarget, int[] maxToAdd) {
         if (!TankOperationHandler.canItemGoInTank(tank, target)) return true;
 
-        OperationResults result = TankOperationHandler.incrementTank(tank, target.getCount());
+        int adding = maxToAdd[0] == -1 ? target.getCount() : Math.min(target.getCount(), maxToAdd[0]);
+
+        OperationResults result = TankOperationHandler.incrementTank(tank, adding);
         if (result == OperationResults.SUCCESS) {
-            replaceTarget.accept(ItemStack.EMPTY);
+            if (adding == target.getCount()) replaceTarget.accept(ItemStack.EMPTY);
+            else target.setCount(target.getCount() - maxToAdd[0]);
+            maxToAdd[0] -= adding;
             return true;
         }
 
         long toStore = Long.MAX_VALUE - TankOperationHandler.getAmountStored(tank);
-        long left = target.getCount() - toStore;
+        long left = adding - toStore;
 
         if (toStore == 0) return false;
 
@@ -44,6 +47,9 @@ public final class TankOperationHandler {
 
         target.setCount((int) left);
         return true;
+    }
+    public static boolean safeIncrement(ItemStack tank, ItemStack target, Consumer<ItemStack> replaceTarget) {
+        return safeIncrement(tank, target, replaceTarget, new int[]{-1});
     }
 
     public static OperationResults decrementTank(ItemStack tank, long amount) {
