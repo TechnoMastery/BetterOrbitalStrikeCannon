@@ -48,11 +48,15 @@ public final class TankHandler {
         ItemStack storedStack = content.copyWithCount(1);
         TANKS.put(tankUuid, new TankContent(storedStack, content.getCount()));
 
+        return buildTankFromUUID(tankUuid);
+    }
+
+    public static ItemStack buildTankFromUUID(UUID uuid) {
         ItemStack tank = new ItemStack(Items.NETHER_STAR);
         NbtCompound nbt = new NbtCompound();
 
         nbt.putString(TYPE_KEY, TANK_TYPE);
-        nbt.putString(UUID_KEY, tankUuid.toString());
+        nbt.putString(UUID_KEY, uuid.toString());
 
         tank.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
         tank.set(DataComponentTypes.MAX_STACK_SIZE, 1);
