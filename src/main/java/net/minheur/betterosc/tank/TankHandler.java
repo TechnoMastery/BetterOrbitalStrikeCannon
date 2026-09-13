@@ -40,8 +40,9 @@ public final class TankHandler {
                 .orElse(false);
     }
 
-    public static @Nullable("If original item stack is empty") ItemStack createTank(ItemStack content) {
+    public static @Nullable ItemStack createTank(ItemStack content) {
         if (content.isEmpty()) return null;
+        if (!IllegalTankItems.isItemAllowed(content)) return null;
 
         UUID tankUuid = UUID.randomUUID();
         ItemStack storedStack = content.copyWithCount(1);
