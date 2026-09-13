@@ -2,7 +2,6 @@ package net.minheur.betterosc.tank;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
 
 import java.util.UUID;
 import java.util.function.Consumer;
