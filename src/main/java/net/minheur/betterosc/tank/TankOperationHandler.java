@@ -1,8 +1,11 @@
 package net.minheur.betterosc.tank;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public final class TankOperationHandler {
 
@@ -23,6 +26,27 @@ public final class TankOperationHandler {
 
         return OperationResults.SUCCESS;
     }
+    public static boolean safeIncrement(ItemStack tank, ItemStack target, Consumer<ItemStack> replaceTarget) {
+        if (!TankOperationHandler.canItemGoInTank(tank, target)) return true;
+
+        OperationResults result = TankOperationHandler.incrementTank(tank, target.getCount());
+        if (result == OperationResults.SUCCESS) {
+            replaceTarget.accept(ItemStack.EMPTY);
+            return true;
+        }
+
+        long toStore = Long.MAX_VALUE - TankOperationHandler.getAmountStored(tank);
+        long left = target.getCount() - toStore;
+
+        if (toStore == 0) return false;
+
+        OperationResults secondResult = TankOperationHandler.incrementTank(tank, toStore);
+        if (secondResult == OperationResults.TOO_MUCH) return false;
+
+        target.setCount((int) left);
+        return true;
+    }
+
     public static OperationResults decrementTank(ItemStack tank, long amount) {
         if (!TankHandler.isTank(tank)) throw new IllegalArgumentException("Incrementing on non-tank item!");
 
