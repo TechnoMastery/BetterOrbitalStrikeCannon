@@ -760,7 +760,7 @@ public final class CommandRegister {
         });
     }
 
-    private static boolean isOpped(ServerCommandSource source) {
+    public static boolean isOpped(ServerCommandSource source) {
         if (!(source.getEntity() instanceof ServerPlayerEntity player)) return false;
         return source.getServer().getPlayerManager().isOperator(player.getPlayerConfigEntry());
     }
