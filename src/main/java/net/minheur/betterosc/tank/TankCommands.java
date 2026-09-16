@@ -159,25 +159,15 @@ public final class TankCommands {
 
                                         while (amountToWithdraw > 0) {
                                             ItemStack giving = contentRef.copy();
+                                            giving.setCount(amountToWithdraw <= maxStackSize ? (int) amountToWithdraw : maxStackSize);
 
-                                            if (amountToWithdraw <= maxStackSize) {
-                                                giving.setCount((int) amountToWithdraw);
+                                            if (!user.giveItemStack(giving)) user.dropItem(giving, true);
+                                            amountToWithdraw -= maxStackSize;
 
-                                                if (!user.giveItemStack(giving)) user.dropItem(giving, true);
-                                                amountToWithdraw = 0;
-                                                TankOperationHandler.decrementTank(tank, amountToWithdraw);
-                                                user.setStackInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
-                                            } else {
-
-                                                giving.setCount(maxStackSize);
-
-                                                if (!user.giveItemStack(giving)) user.dropItem(giving, true);
-                                                amountToWithdraw -= maxStackSize;
-                                                TankOperationHandler.decrementTank(tank, maxStackSize);
-
-                                            }
+                                            TankOperationHandler.decrementTank(tank, maxStackSize);
                                         }
 
+                                        if (TankOperationHandler.getAmountStored(tank) <= 0) user.setStackInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
                                         return 1;
                                     }))
                             )
