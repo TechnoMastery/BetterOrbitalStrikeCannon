@@ -39,6 +39,8 @@ public final class TankCommands {
                                     return 0;
                                 }
 
+                                user.setStackInHand(Hand.MAIN_HAND, tank);
+
                                 for (int i = 0; i < user.getInventory().size(); i++) {
                                     ItemStack target = user.getInventory().getStack(i);
                                     final int index = i;
@@ -49,7 +51,6 @@ public final class TankCommands {
                                 ItemStack offHand = user.getOffHandStack();
                                 TankOperationHandler.safeIncrement(tank, offHand, (stack) -> user.setStackInHand(Hand.OFF_HAND, stack));
 
-                                user.setStackInHand(Hand.MAIN_HAND, tank);
                                 return 1;
                             }))
 
