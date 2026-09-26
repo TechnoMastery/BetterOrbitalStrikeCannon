@@ -6,6 +6,7 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Hand;
+import net.minheur.betterosc.recipes.RecipesHandler;
 import net.minheur.betterosc.tank.TankCommands;
 
 public final class Betterosc implements ModInitializer {
@@ -14,6 +15,7 @@ public final class Betterosc implements ModInitializer {
     public void onInitialize() {
         ConfigHandler.load();
         UsedItemsHandler.load();
+        RecipesHandler.loadRecipes();
 
         ExecutorHandler.registerUsage();
 
