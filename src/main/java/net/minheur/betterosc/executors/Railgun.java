@@ -19,6 +19,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minheur.betterosc.ConfigHandler;
 import net.minheur.betterosc.UsedItemsHandler;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Random;
 import java.util.Timer;
@@ -29,7 +31,7 @@ public final class Railgun {
     public static final String TYPE_STRAIGHT = "railgun_straight";
     private static final Random random = new Random();
 
-    public static ItemStack createStraight(double radius) {
+    public static @NonNull ItemStack createStraight(@Nullable Double radius) {
         ItemStack stack = new ItemStack(Items.CROSSBOW);
         stack.set(DataComponentTypes.CUSTOM_NAME, Text.literal("Railgun"));
         stack.setDamage(stack.getMaxDamage() -1);
@@ -40,13 +42,16 @@ public final class Railgun {
         NbtCompound nbt = new NbtCompound();
         nbt.putString("uuid", UUID.randomUUID().toString());
         nbt.putString("oc_type", TYPE_STRAIGHT);
-        nbt.putDouble("radius", radius);
+        nbt.putDouble("radius", radius == null ? ConfigHandler.getConfig().railgunSpreadRadius : radius);
 
         stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
         return stack;
     }
+    public static @NonNull ItemStack createStraight() {
+        return createStraight(null);
+    }
 
-    public static ActionResult handle(ServerPlayerEntity player, UUID uuid, NbtCompound nbt, ItemStack stack, Hand hand) {
+    public static ActionResult handle(ServerPlayerEntity player, UUID uuid, NbtCompound nbt, @NonNull ItemStack stack, Hand hand) {
         UsedItemsHandler.getUsedItems().add(uuid);
 
         ChargedProjectilesComponent charged = stack.get(DataComponentTypes.CHARGED_PROJECTILES);
@@ -81,7 +86,7 @@ public final class Railgun {
         return ActionResult.CONSUME;
     }
 
-    public static void fireStraight(ServerPlayerEntity player, Vec3d playerEye, Vec3d direction, double spreadRadius) {
+    public static void fireStraight(@NonNull ServerPlayerEntity player, Vec3d playerEye, Vec3d direction, double spreadRadius) {
         ServerWorld world = player.getEntityWorld();
         double velocity = ConfigHandler.getConfig().railgunArrowVelocity;
 

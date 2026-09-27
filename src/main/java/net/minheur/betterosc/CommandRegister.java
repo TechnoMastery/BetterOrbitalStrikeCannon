@@ -296,8 +296,7 @@ public final class CommandRegister {
                                     .then(literal("railgun").then(literal("straight")
                                             .executes(source -> { // RAILGUN
                                                 if (!(source.getSource().getEntity() instanceof ServerPlayerEntity user)) return 0;
-                                                double radius = ConfigHandler.getConfig().railgunSpreadRadius;
-                                                ItemStack toGive = Railgun.createStraight(radius);
+                                                ItemStack toGive = Railgun.createStraight();
                                                 if (!user.giveItemStack(toGive)) user.dropItem(toGive, true);
                                                 source.getSource().sendFeedback(() -> Text.empty()
                                                                 .append(Text.literal("Gave you ").formatted(Formatting.YELLOW))
@@ -310,14 +309,13 @@ public final class CommandRegister {
                                             .then(argument("amount", IntegerArgumentType.integer())
                                                     .executes(source -> { // RAILGUN - amount
                                                         if (!(source.getSource().getEntity() instanceof ServerPlayerEntity user)) return 0;
-                                                        double radius = ConfigHandler.getConfig().railgunSpreadRadius;
                                                         int amount = IntegerArgumentType.getInteger(source, "amount");
                                                         if (amount <= 0) {
                                                             source.getSource().sendError(Text.literal("Need at least 1 railfun!"));
                                                             return 0;
                                                         }
                                                         for (int i = 0; i < amount; i++) {
-                                                            ItemStack toGive = Railgun.createStraight(radius);
+                                                            ItemStack toGive = Railgun.createStraight();
                                                             if (!user.giveItemStack(toGive)) user.dropItem(toGive, true);
                                                         }
                                                         source.getSource().sendFeedback(() -> Text.empty()
