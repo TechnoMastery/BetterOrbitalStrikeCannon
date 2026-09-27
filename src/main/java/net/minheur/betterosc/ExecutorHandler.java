@@ -51,7 +51,7 @@ public final class ExecutorHandler {
                 int x = crafter.getBlockX();
                 int z = crafter.getBlockZ();
 
-                yield Nuke.create(ringAmount, x, z);
+                yield Nuke.create(ringAmount, x, z, crafter.getEntityWorld().getRegistryKey());
             }
             case Nuke.TYPE_MOBILE -> {
                 int ringAmount = result.getExtra().get("ringAmount").getAsInt();

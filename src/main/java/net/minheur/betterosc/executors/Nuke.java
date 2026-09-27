@@ -7,11 +7,14 @@ import net.minecraft.entity.TntEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
@@ -33,11 +36,12 @@ public final class Nuke {
     public static final String TYPE_FIXED = "nuke_fixed";
     public static final String TYPE_MOBILE = "nuke_mobile";
 
-    @Contract("_, null, !null -> fail; _, !null, null -> fail")
-    public static @NonNull ItemStack create(int ringAmount, @Nullable Integer x, @Nullable Integer z) {
+    @Contract("_, null, !null, _ -> fail; _, !null, null, _ -> fail; _, null, null, !null -> fail; _, !null, !null, null -> fail")
+    public static @NonNull ItemStack create(int ringAmount, @Nullable Integer x, @Nullable Integer z, @Nullable RegistryKey<World> world) {
         // check null states
-        if (x == null && z != null) throw new IllegalArgumentException("Both x and z should be either null or non-null !");
-        if (x != null && z == null) throw new IllegalArgumentException("Both x and z should be either null or non-null !");
+        if (x == null && (z != null || world != null)) throw new IllegalArgumentException("Both x, z and world should be either null or non-null !");
+        if (z == null && x != null) throw new IllegalArgumentException("Both x, z and world should be either null or non-null !");
+        if (world == null && x != null) throw new IllegalArgumentException("Both x, z and world should be either null or non-null !");
 
         ItemStack stack = new ItemStack(Items.FISHING_ROD);
         stack.set(DataComponentTypes.CUSTOM_NAME, Text.literal("Nuke shot"));
@@ -52,6 +56,7 @@ public final class Nuke {
             nbt.putString("oc_type", TYPE_FIXED);
             nbt.putInt("x", x);
             nbt.putInt("z", z);
+            nbt.putString("dim", world.getValue().toString());
         }
 
         nbt.putInt("ring_amount", ringAmount);
@@ -60,7 +65,7 @@ public final class Nuke {
         return stack;
     }
     public static @NonNull ItemStack create(int ringAmount) {
-        return create(ringAmount, null, null);
+        return create(ringAmount, null, null, null);
     }
 
     public static ActionResult handle(ServerPlayerEntity player, UUID itemUUID, NbtCompound nbt, Hand hand, ItemStack stack) {
@@ -70,12 +75,21 @@ public final class Nuke {
             if (UsedItemsHandler.getUsedItems().contains(itemUUID)) return ActionResult.PASS;
             UsedItemsHandler.getUsedItems().add(itemUUID);
 
-            int x;
-            int z;
+            ServerWorld world = player.getEntityWorld();
+
+            int x, z;
+            ServerWorld targetWorld;
 
             if (nbt.getInt("x").isPresent()) {
                 x = nbt.getInt("x").orElseThrow();
                 z = nbt.getInt("z").orElseThrow();
+
+                String targetWorldKeyString = nbt.getString("dim", null);
+                RegistryKey<World> key = RegistryKey.of(
+                        RegistryKeys.WORLD,
+                        Identifier.of(targetWorldKeyString)
+                );
+                targetWorld = world.getServer().getWorld(key);
             } else {
                 HitResult hitResult = player.raycast(500.0f, 0.0f, false);
                 if (hitResult.getType() != HitResult.Type.BLOCK) return ActionResult.PASS;
@@ -83,18 +97,18 @@ public final class Nuke {
 
                 x = hitBlock.getX();
                 z = hitBlock.getZ();
+                targetWorld = world;
             }
 
             Integer ringAmount = nbt.getInt("ring_amount").orElse(null);
             if (ringAmount == null) return ActionResult.PASS;
 
-            ServerWorld world = player.getEntityWorld();
             long delay = (long) (ConfigHandler.getConfig().rodCastDelay * 1000.0f);
 
             world.getServer().execute(() -> new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    world.getServer().execute(() -> spawn(world, x, z, ringAmount));
+                    world.getServer().execute(() -> spawn(targetWorld, x, z, ringAmount));
                 }
             }, delay));
 
