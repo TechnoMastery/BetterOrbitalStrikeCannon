@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-public class UsedItemsHandler {
+public final class UsedItemsHandler {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Path SAVE_PATH = FabricLoader.getInstance().getConfigDir().resolve("used_ocs.json");
     private static final Set<UUID> usedItems = new HashSet<>();
