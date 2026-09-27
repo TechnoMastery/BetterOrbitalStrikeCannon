@@ -32,10 +32,10 @@ public final class ExecutorHandler {
                 int y = crafter.getBlockY();
                 int z = crafter.getBlockZ();
 
-                if (!result.getExtra().has("pigAmount")) yield CrashPig.create(x, y, z);
+                if (!result.getExtra().has("pigAmount")) yield CrashPig.create(x, y, z, crafter.getEntityWorld().getRegistryKey());
 
                 int amount = result.getExtra().get("pigAmount").getAsInt();
-                yield CrashPig.create(x, y, z, amount);
+                yield CrashPig.create(x, y, z, crafter.getEntityWorld().getRegistryKey(), amount);
             }
             case Darkness.TYPE -> {
                 JsonElement radius = result.getExtra().get("radius");

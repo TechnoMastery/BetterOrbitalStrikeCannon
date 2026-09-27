@@ -184,7 +184,7 @@ public final class CommandRegister {
                                                 if (!(source.getSource().getEntity() instanceof ServerPlayerEntity user)) return 0;
                                                 Vec3d target = Vec3ArgumentType.getVec3(source, "target");
                                                 int pigAmount = ConfigHandler.getConfig().pigAmount;
-                                                CrashPig.spawn(user, (int) target.x, (int) target.y, (int) target.z, pigAmount);
+                                                CrashPig.spawn(user.getEntityWorld(), (int) target.x, (int) target.y, (int) target.z, pigAmount);
                                                 source.getSource().sendFeedback(() -> Text.literal("A pig army of " + pigAmount + " will crash your enemies...").formatted(Formatting.DARK_AQUA), true);
                                                 return 1;
                                             })
@@ -193,7 +193,7 @@ public final class CommandRegister {
                                                         if (!(source.getSource().getEntity() instanceof ServerPlayerEntity user)) return 0;
                                                         Vec3d target = Vec3ArgumentType.getVec3(source, "target");
                                                         int pigAmount = IntegerArgumentType.getInteger(source, "pigAmount");
-                                                        CrashPig.spawn(user, (int) target.x, (int) target.y, (int) target.z, pigAmount);
+                                                        CrashPig.spawn(user.getEntityWorld(), (int) target.x, (int) target.y, (int) target.z, pigAmount);
                                                         source.getSource().sendFeedback(() -> Text.literal("A pig army of " + pigAmount + " will crash your enemies...").formatted(Formatting.DARK_AQUA), true);
                                                         return 1;
                                                     })
@@ -691,7 +691,7 @@ public final class CommandRegister {
                                             .executes(source -> {
                                                 if (!(source.getSource().getEntity() instanceof ServerPlayerEntity user)) return 0;
                                                 Vec3d target = Vec3ArgumentType.getVec3(source, "target");
-                                                ItemStack toGive = CrashPig.create((int) target.x, (int) target.y, (int) target.z);
+                                                ItemStack toGive = CrashPig.create((int) target.x, (int) target.y, (int) target.z, user.getEntityWorld().getRegistryKey());
                                                 if (!user.giveItemStack(toGive)) user.dropItem(toGive, true);
                                                 source.getSource().sendFeedback(() -> Text.empty()
                                                                 .append(Text.literal("Gave you ").formatted(Formatting.DARK_AQUA))
@@ -711,7 +711,7 @@ public final class CommandRegister {
                                                             return 0;
                                                         }
                                                         for (int i = 0; i < amount; i++) {
-                                                            ItemStack toGive = CrashPig.create((int) target.x, (int) target.y, (int) target.z);
+                                                            ItemStack toGive = CrashPig.create((int) target.x, (int) target.y, (int) target.z, user.getEntityWorld().getRegistryKey());
                                                             if (!user.giveItemStack(toGive)) user.dropItem(toGive, true);
                                                         }
                                                         source.getSource().sendFeedback(() -> Text.empty()
@@ -733,7 +733,7 @@ public final class CommandRegister {
                                                                 }
                                                                 int pigAmount = IntegerArgumentType.getInteger(source, "pigAmount");
                                                                 for (int i = 0; i < amount; i++) {
-                                                                    ItemStack toGive = CrashPig.create((int) target.x, (int) target.y, (int) target.z, pigAmount);
+                                                                    ItemStack toGive = CrashPig.create((int) target.x, (int) target.y, (int) target.z, user.getEntityWorld().getRegistryKey(), pigAmount);
                                                                     if (!user.giveItemStack(toGive)) user.dropItem(toGive, true);
                                                                 }
                                                                 source.getSource().sendFeedback(() -> Text.empty()

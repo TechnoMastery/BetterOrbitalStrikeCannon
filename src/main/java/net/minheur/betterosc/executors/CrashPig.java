@@ -3,22 +3,24 @@ package net.minheur.betterosc.executors;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.passive.PigEntity;
-import net.minecraft.entity.passive.WolfEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
+import net.minecraft.world.World;
 import net.minheur.betterosc.Betterosc;
 import net.minheur.betterosc.ConfigHandler;
 import net.minheur.betterosc.UsedItemsHandler;
+import org.jetbrains.annotations.Contract;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -27,7 +29,8 @@ import java.util.UUID;
 public final class CrashPig {
     public static final String TYPE = "crash_pig";
 
-    public static ItemStack create(int x, int y, int z, Integer amount) {
+    @Contract("_, _, _, null, _ -> fail")
+    public static @NonNull ItemStack create(int x, int y, int z, RegistryKey<World> targetWorld, Integer amount) {
         ItemStack stack = new ItemStack(Items.FISHING_ROD);
         stack.set(DataComponentTypes.CUSTOM_NAME, Text.literal("Orbital CrashPig Cannon"));
         stack.set(DataComponentTypes.DAMAGE, stack.getMaxDamage() -1);
@@ -37,12 +40,14 @@ public final class CrashPig {
         nbt.putInt("x", x);
         nbt.putInt("y", y);
         nbt.putInt("z", z);
+        nbt.putString("dim", targetWorld.getValue().toString());
         nbt.putString("oc_type", TYPE);
         stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
         return stack;
     }
-    public static ItemStack create(int x, int y, int z) {
-        return create(x, y, z, null);
+    @Contract("_,_,_, null -> fail")
+    public static @NonNull ItemStack create(int x, int y, int z, RegistryKey<World> targetWorld) {
+        return create(x, y, z, targetWorld, null);
     }
 
     public static ActionResult handle(ServerPlayerEntity player, UUID itemUUID, NbtCompound nbt, Hand hand, ItemStack stack) {
@@ -63,10 +68,21 @@ public final class CrashPig {
             ServerWorld world = player.getEntityWorld();
             long delay = (long) (ConfigHandler.getConfig().rodCastDelay * 1000.0f);
 
+            // getting target world
+            ServerWorld targetWorld;
+            String targetWorldKeyString = nbt.getString("dim", null);
+            if (targetWorldKeyString != null && world.getServer() != null) {
+                RegistryKey<World> key = RegistryKey.of(
+                        RegistryKeys.WORLD,
+                        Identifier.of(targetWorldKeyString)
+                );
+                targetWorld = world.getServer().getWorld(key);
+            } else targetWorld = world;
+
             world.getServer().execute(() -> (new Timer()).schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    world.getServer().execute(() -> spawn(player, x, y, z, finalAmount));
+                    world.getServer().execute(() -> spawn(targetWorld, x, y, z, finalAmount));
                 }
             }, delay));
             return ActionResult.PASS;
@@ -77,8 +93,7 @@ public final class CrashPig {
         }
     }
 
-    public static void spawn(ServerPlayerEntity player, int x, int y, int z, int amount) {
-        ServerWorld world = player.getEntityWorld();
+    public static void spawn(@NonNull ServerWorld world, int x, int y, int z, int amount) {
 
         // spawn wolves
         for (int i = 0; i < amount; i++) {
