@@ -113,8 +113,8 @@ public final class ExecutorHandler {
             }
             case Wolves.TYPE_MOBILE -> {
                 JsonElement amount = result.getExtra().get("amount");
-                if (amount == null) yield Wolves.create();
-                yield Wolves.create(amount.getAsInt());
+                if (amount == null) yield Wolves.createMobile();
+                yield Wolves.createMobile(amount.getAsInt());
             }
             default -> throw new IllegalStateException("Did not found custom item type for " + result.getId());
         };
@@ -164,8 +164,8 @@ public final class ExecutorHandler {
                     case Stab.TYPE_FIXED, Stab.TYPE_MOBILE -> Stab.handle(serverPlayer, uuid, nbt, hand, stack);
                     case TpStasis.TYPE_FIXED, TpStasis.TYPE_MOBILE ->
                             TpStasis.handle(serverPlayer, uuid, nbt, hand, stack);
-                    case Wolves.TYPE_MOBILE /* , Wolves.TYPE_FIXED */ ->
-                            Wolves.handle(serverPlayer, uuid, nbt, hand, stack);
+                    case Wolves.TYPE_MOBILE-> Wolves.handle(serverPlayer, uuid, nbt, hand, stack, true);
+                    case Wolves.TYPE_FIXED-> Wolves.handle(serverPlayer, uuid, nbt, hand, stack, false);
                     case Darkness.TYPE -> Darkness.handle(serverPlayer, uuid, nbt, hand, stack);
                     case CrashPig.TYPE -> CrashPig.handle(serverPlayer, uuid, nbt, hand, stack);
                     default -> ActionResult.PASS;

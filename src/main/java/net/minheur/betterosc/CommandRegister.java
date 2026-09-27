@@ -630,7 +630,7 @@ public final class CommandRegister {
                                     .then(literal("wolves")
                                             .executes(source -> { // WOLVES
                                                 if (!(source.getSource().getEntity() instanceof ServerPlayerEntity user)) return 0;
-                                                ItemStack toGive = Wolves.create();
+                                                ItemStack toGive = Wolves.createMobile();
                                                 if (!user.giveItemStack(toGive)) user.dropItem(toGive, true);
                                                 source.getSource().sendFeedback(() -> Text.empty()
                                                                 .append(Text.literal("Gave you ").formatted(Formatting.GREEN))
@@ -649,7 +649,7 @@ public final class CommandRegister {
                                                             return 0;
                                                         }
                                                         for (int i = 0; i < amount; i++) {
-                                                            ItemStack toGive = Wolves.create();
+                                                            ItemStack toGive = Wolves.createMobile();
                                                             if (!user.giveItemStack(toGive)) user.dropItem(toGive, true);
                                                         }
                                                         source.getSource().sendFeedback(() -> Text.empty()
@@ -670,7 +670,7 @@ public final class CommandRegister {
                                                                 }
                                                                 int wolvesAmount = IntegerArgumentType.getInteger(source, "wolvesAmount");
                                                                 for (int i = 0; i < amount; i++) {
-                                                                    ItemStack toGive = Wolves.create(wolvesAmount);
+                                                                    ItemStack toGive = Wolves.createMobile(wolvesAmount);
                                                                     if (!user.giveItemStack(toGive)) user.dropItem(toGive, true);
                                                                 }
                                                                 source.getSource().sendFeedback(() -> Text.empty()

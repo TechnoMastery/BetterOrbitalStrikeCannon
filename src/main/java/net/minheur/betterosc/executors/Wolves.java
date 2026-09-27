@@ -19,31 +19,42 @@ import net.minheur.betterosc.Betterosc;
 import net.minheur.betterosc.ConfigHandler;
 import net.minheur.betterosc.UsedItemsHandler;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
 public final class Wolves {
-    public static final String TYPE_FIXED = "wolf_fixed"; // todo
+    public static final String TYPE_FIXED = "wolf_fixed";
     public static final String TYPE_MOBILE = "wolf_mobile";
 
-    public static @NonNull ItemStack create(int wolfAmount) {
+    public static @NonNull ItemStack createFixed(@Nullable UUID target, int wolfAmount) {
         ItemStack stack = new ItemStack(Items.FISHING_ROD);
         stack.set(DataComponentTypes.CUSTOM_NAME, Text.literal("Orbital Wolf"));
         stack.set(DataComponentTypes.DAMAGE, stack.getMaxDamage() -1);
         NbtCompound nbt = new NbtCompound();
         nbt.putString("uuid", UUID.randomUUID().toString());
         nbt.putInt("wolf_amount", wolfAmount);
-        nbt.putString("oc_type", TYPE_MOBILE);
+
+        nbt.putString("oc_type", target == null ? TYPE_MOBILE : TYPE_FIXED);
+        if (target != null) nbt.putString("target", target.toString());
+
         stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
         return stack;
     }
-    public static @NonNull ItemStack create() {
-        return create(ConfigHandler.getConfig().defaultWolfAmount);
+    public static @NonNull ItemStack createFixed(UUID target) {
+        return createFixed(target, ConfigHandler.getConfig().defaultWolfAmount);
     }
 
-    public static ActionResult handle(ServerPlayerEntity player, UUID itemUUID, NbtCompound nbt, Hand hand, ItemStack stack) {
+    public static @NonNull ItemStack createMobile(int wolfAmount) {
+        return createFixed(null, wolfAmount);
+    }
+    public static @NonNull ItemStack createMobile() {
+        return createFixed(null);
+    }
+
+    public static ActionResult handle(ServerPlayerEntity player, UUID itemUUID, NbtCompound nbt, Hand hand, ItemStack stack, boolean mobile) {
         if (!UsedItemsHandler.getCastedFishingRods().contains(itemUUID)) {
             UsedItemsHandler.getCastedFishingRods().add(itemUUID);
 
@@ -57,10 +68,18 @@ public final class Wolves {
             ServerWorld world = player.getEntityWorld();
             long delay = (long) (ConfigHandler.getConfig().rodCastDelay * 1000.0f);
 
+            ServerPlayerEntity target;
+            if (mobile) target = player;
+            else {
+                UUID targetUUID = UUID.fromString(nbt.getString("target").orElse(player.getUuidAsString()));
+                target = world.getServer().getPlayerManager().getPlayer(targetUUID);
+            }
+            final ServerPlayerEntity finalTarget = target == null ? player : target;
+
             world.getServer().execute(() -> (new Timer()).schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    world.getServer().execute(() -> spawn(player, finalAmount));
+                    world.getServer().execute(() -> spawn(finalTarget, finalAmount));
                 }
             }, delay));
             return ActionResult.PASS;
