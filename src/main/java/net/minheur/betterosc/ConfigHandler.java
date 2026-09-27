@@ -30,6 +30,7 @@ public final class ConfigHandler {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             loadDefault();
         }
     }
@@ -37,7 +38,9 @@ public final class ConfigHandler {
     public static void save() {
         try (Writer writer = new FileWriter(CONFIG_PATH.toFile())) {
             GSON.toJson(config, writer);
-        } catch (Exception ignored) {}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private static void loadDefault() {
