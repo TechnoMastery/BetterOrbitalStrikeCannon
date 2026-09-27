@@ -53,31 +53,18 @@ public final class ExecutorHandler {
             }
 
             // ROD
-            if (stack.getItem() == Items.FISHING_ROD) {
-                switch (type) {
-                    case Nuke.TYPE_FIXED, Nuke.TYPE_MOBILE -> {
-                        return Nuke.handle(serverPlayer, uuid, nbt, hand, stack);
-                    }
-                    case Stab.TYPE_FIXED, Stab.TYPE_MOBILE -> {
-                        return Stab.handle(serverPlayer, uuid, nbt, hand, stack);
-                    }
-                    case TpStasis.TYPE_FIXED, TpStasis.TYPE_MOBILE -> {
-                        return TpStasis.handle(serverPlayer, uuid, nbt, hand, stack);
-                    }
-                    case Wolves.TYPE_MOBILE /* , Wolves.TYPE_FIXED */ -> {
-                        return Wolves.handle(serverPlayer, uuid, nbt, hand, stack);
-                    }
-                    case Darkness.TYPE -> {
-                        return Darkness.handle(serverPlayer, uuid, nbt, hand, stack);
-                    }
-                    case CrashPig.TYPE -> {
-                        return CrashPig.handle(serverPlayer, uuid, nbt, hand, stack);
-                    }
-                    default -> {
-                        return ActionResult.PASS;
-                    }
-                }
-            }
+            if (stack.getItem() == Items.FISHING_ROD)
+                return switch (type) {
+                    case Nuke.TYPE_FIXED, Nuke.TYPE_MOBILE -> Nuke.handle(serverPlayer, uuid, nbt, hand, stack);
+                    case Stab.TYPE_FIXED, Stab.TYPE_MOBILE -> Stab.handle(serverPlayer, uuid, nbt, hand, stack);
+                    case TpStasis.TYPE_FIXED, TpStasis.TYPE_MOBILE ->
+                            TpStasis.handle(serverPlayer, uuid, nbt, hand, stack);
+                    case Wolves.TYPE_MOBILE /* , Wolves.TYPE_FIXED */ ->
+                            Wolves.handle(serverPlayer, uuid, nbt, hand, stack);
+                    case Darkness.TYPE -> Darkness.handle(serverPlayer, uuid, nbt, hand, stack);
+                    case CrashPig.TYPE -> CrashPig.handle(serverPlayer, uuid, nbt, hand, stack);
+                    default -> ActionResult.PASS;
+                };
 
             return ActionResult.PASS;
         });
