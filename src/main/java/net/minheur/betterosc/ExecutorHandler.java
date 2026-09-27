@@ -1,5 +1,6 @@
 package net.minheur.betterosc;
 
+import com.google.gson.JsonElement;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ChargedProjectilesComponent;
@@ -9,11 +10,115 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
+import net.minheur.betterosc.crafts.InvalidCraftArgumentException;
 import net.minheur.betterosc.executors.*;
+import net.minheur.betterosc.recipes.Recipe;
+import org.jetbrains.annotations.Contract;
 
 import java.util.UUID;
 
 public final class ExecutorHandler {
+
+    @Contract("null, _, _ -> fail; _, null, _ -> fail")
+    public static ItemStack mkFromResultContainer(Recipe.ResultContainer result, ServerPlayerEntity crafter, String[] commandArgs) throws InvalidCraftArgumentException {
+        // handle null and default stack
+        if (result == null) throw new IllegalArgumentException("Can't create result for null result container!");
+        if (result.getIsByStack()) return result.getAsStack();
+        if (commandArgs == null) commandArgs = new String[0];
+
+        if (crafter == null) throw new IllegalArgumentException("Can't have a null crafter player!");
+
+        return switch (result.getId()) {
+            case CrashPig.TYPE -> {
+                int x, y, z;
+                try {
+                    x = Integer.getInteger(commandArgs[0]);
+                    y = Integer.getInteger(commandArgs[1]);
+                    z = Integer.getInteger(commandArgs[2]);
+                } catch (Throwable e) {
+                    throw new InvalidCraftArgumentException();
+                }
+
+                if (!result.getExtra().has("pigAmount")) yield CrashPig.create(x, y, z);
+
+                int amount = result.getExtra().get("pigAmount").getAsInt();
+                yield CrashPig.create(x, y, z, amount);
+            }
+            case Darkness.TYPE -> {
+                JsonElement radius = result.getExtra().get("radius");
+                JsonElement duration = result.getExtra().get("duration");
+                if (radius == null && duration == null) yield Darkness.create();
+
+                int intRadius = radius == null ? ConfigHandler.getConfig().darknessRadius : radius.getAsInt();
+                int intDuration = duration == null ? ConfigHandler.getConfig().darknessDuration : duration.getAsInt();
+                yield Darkness.create(intRadius, intDuration);
+            }
+            case Nuke.TYPE_FIXED -> {
+                int ringAmount = result.getExtra().get("ringAmount").getAsInt();
+                int x, z;
+                try {
+                    x = Integer.getInteger(commandArgs[0]);
+                    z = Integer.getInteger(commandArgs[1]);
+                } catch (Throwable e) {
+                    throw new InvalidCraftArgumentException();
+                }
+
+                yield Nuke.create(ringAmount, x, z);
+            }
+            case Nuke.TYPE_MOBILE -> {
+                int ringAmount = result.getExtra().get("ringAmount").getAsInt();
+                yield Nuke.create(ringAmount);
+            }
+            case Railgun.TYPE_STRAIGHT -> {
+                JsonElement radius = result.getExtra().get("radius");
+                if (radius == null) yield Railgun.createStraight();
+
+                double intRadius = radius.getAsDouble();
+                yield Railgun.createStraight(intRadius);
+            }
+            case Stab.TYPE_FIXED -> {
+                int x, z;
+                try {
+                    x = Integer.getInteger(commandArgs[0]);
+                    z = Integer.getInteger(commandArgs[1]);
+                } catch (Throwable e) {
+                    throw new InvalidCraftArgumentException();
+                }
+                yield Stab.create(x, z);
+            }
+            case Stab.TYPE_MOBILE -> Stab.create();
+            case TotemStasis.TYPE_FIXED -> {
+                int x = result.getExtra().get("x").getAsInt();
+                int y = result.getExtra().get("y").getAsInt();
+                int z = result.getExtra().get("z").getAsInt();
+                yield TotemStasis.createFixed(crafter.getUuid(), x, y, z);
+            }
+            case TotemStasis.TYPE_MOBILE -> {
+                int x = result.getExtra().get("x").getAsInt();
+                int y = result.getExtra().get("y").getAsInt();
+                int z = result.getExtra().get("z").getAsInt();
+                yield TotemStasis.createMobile(x, y, z);
+            }
+            case TpStasis.TYPE_FIXED -> {
+                int x = result.getExtra().get("x").getAsInt();
+                int y = result.getExtra().get("y").getAsInt();
+                int z = result.getExtra().get("z").getAsInt();
+                yield TpStasis.createFixed(crafter.getUuid(), x, y, z);
+            }
+            case TpStasis.TYPE_MOBILE -> {
+                int x = result.getExtra().get("x").getAsInt();
+                int y = result.getExtra().get("y").getAsInt();
+                int z = result.getExtra().get("z").getAsInt();
+                yield TpStasis.createMobile(x, y, z);
+            }
+            case Wolves.TYPE_MOBILE -> {
+                JsonElement amount = result.getExtra().get("amount");
+                if (amount == null) yield Wolves.create();
+                yield Wolves.create(amount.getAsInt());
+            }
+            default -> throw new IllegalStateException("Did not found custom item type for " + result.getId());
+        };
+    }
 
     public static void registerUsage() {
         UseItemCallback.EVENT.register((player, world, hand) -> {

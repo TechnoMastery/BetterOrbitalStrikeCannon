@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-public record Recipe(String recipeId, ItemStack result, List<IngredientMatcher> ingredients) {
+public record Recipe(String recipeId, ResultContainer result, List<IngredientMatcher> ingredients) {
 
     public Recipe {
         ingredients = List.copyOf(ingredients);
@@ -23,7 +23,7 @@ public record Recipe(String recipeId, ItemStack result, List<IngredientMatcher> 
         Objects.requireNonNull(result, "result");
     }
 
-    public Recipe(String recipeId, ItemStack result, IngredientMatcher... ingredients) {
+    public Recipe(String recipeId, ResultContainer result, IngredientMatcher... ingredients) {
         this(recipeId, result, List.of(ingredients));
     }
 
@@ -66,7 +66,7 @@ public record Recipe(String recipeId, ItemStack result, List<IngredientMatcher> 
         if (!json.has("id")) throw new IllegalStateException("Recipe JSON has no id!");
 
         String id = json.get("id").getAsString();
-        ItemStack result = decodeStack(json.getAsJsonObject("result"));
+        ResultContainer result = decodeResult(json.getAsJsonObject("result"));
 
         JsonArray ingredientArray = json.has("ingredients") ? json.getAsJsonArray("ingredients") : new JsonArray();
         List<IngredientMatcher> ingredients = new ArrayList<>();
@@ -74,6 +74,16 @@ public record Recipe(String recipeId, ItemStack result, List<IngredientMatcher> 
             ingredients.add(IngredientMatcher.fromJson(element.getAsJsonObject()));
 
         return new Recipe(id, result, ingredients);
+    }
+
+    @Contract("_ -> new")
+    private static @NonNull ResultContainer decodeResult(@NonNull JsonObject object) {
+        // decode as 'osc' item, if applicable
+        String id = object.getAsJsonObject().get("id").getAsString();
+        if (id.startsWith("betterosc:"))
+            return new ResultContainer(id.substring(id.indexOf(':') +1), object.getAsJsonObject("extra"));
+
+        return new ResultContainer(decodeStack(object));
     }
 
     /**
@@ -201,6 +211,45 @@ public record Recipe(String recipeId, ItemStack result, List<IngredientMatcher> 
             }
 
             return new MatchRules(required, forbidden, ignored);
+        }
+    }
+
+    public static final class ResultContainer {
+        private final ItemStack resultAsStack;
+
+        private final String id;
+        private final JsonObject extra;
+
+        @Contract("null -> fail")
+        public ResultContainer(ItemStack resultAsStack) {
+            if (resultAsStack == null) throw new IllegalArgumentException("Can't make recipe result with null stack!");
+            this.resultAsStack = resultAsStack;
+
+            id = null;
+            extra = null;
+        }
+        @Contract("null, _ -> fail")
+        public ResultContainer(String id, JsonObject extra) {
+            if (id == null) throw new IllegalArgumentException("Can't have recipe result with null id!");
+            this.id = id;
+            this.extra = extra == null || extra.isJsonNull() ? new JsonObject() : extra;
+
+            resultAsStack = null;
+        }
+
+        public boolean getIsByStack() {
+            return id == null;
+        }
+
+        public ItemStack getAsStack() {
+            return resultAsStack;
+        }
+
+        public String getId() {
+            return id;
+        }
+        public JsonObject getExtra() {
+            return extra;
         }
     }
 
