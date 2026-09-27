@@ -14,7 +14,7 @@ import java.util.List;
 
 public final class ConfigHandler {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("orbital_strike.json");
+    private static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("betterosc").resolve("orbital_strike.json");
 
     private static ConfigData config;
 
