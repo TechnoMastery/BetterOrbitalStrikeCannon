@@ -30,14 +30,9 @@ public final class ExecutorHandler {
 
         return switch (result.getId()) {
             case CrashPig.TYPE -> {
-                int x, y, z;
-                try {
-                    x = Integer.getInteger(commandArgs[0]);
-                    y = Integer.getInteger(commandArgs[1]);
-                    z = Integer.getInteger(commandArgs[2]);
-                } catch (Throwable e) {
-                    throw new InvalidCraftArgumentException();
-                }
+                int x = crafter.getBlockX();
+                int y = crafter.getBlockY();
+                int z = crafter.getBlockZ();
 
                 if (!result.getExtra().has("pigAmount")) yield CrashPig.create(x, y, z);
 
@@ -55,13 +50,8 @@ public final class ExecutorHandler {
             }
             case Nuke.TYPE_FIXED -> {
                 int ringAmount = result.getExtra().get("ringAmount").getAsInt();
-                int x, z;
-                try {
-                    x = Integer.getInteger(commandArgs[0]);
-                    z = Integer.getInteger(commandArgs[1]);
-                } catch (Throwable e) {
-                    throw new InvalidCraftArgumentException();
-                }
+                int x = crafter.getBlockX();
+                int z = crafter.getBlockZ();
 
                 yield Nuke.create(ringAmount, x, z);
             }
@@ -77,38 +67,33 @@ public final class ExecutorHandler {
                 yield Railgun.createStraight(intRadius);
             }
             case Stab.TYPE_FIXED -> {
-                int x, z;
-                try {
-                    x = Integer.getInteger(commandArgs[0]);
-                    z = Integer.getInteger(commandArgs[1]);
-                } catch (Throwable e) {
-                    throw new InvalidCraftArgumentException();
-                }
+                int x = crafter.getBlockX();
+                int z = crafter.getBlockZ();
                 yield Stab.create(x, z);
             }
             case Stab.TYPE_MOBILE -> Stab.create();
             case TotemStasis.TYPE_FIXED -> {
-                int x = result.getExtra().get("x").getAsInt();
-                int y = result.getExtra().get("y").getAsInt();
-                int z = result.getExtra().get("z").getAsInt();
+                int x = crafter.getBlockX();
+                int y = crafter.getBlockY();
+                int z = crafter.getBlockZ();
                 yield TotemStasis.createFixed(crafter.getUuid(), x, y, z);
             }
             case TotemStasis.TYPE_MOBILE -> {
-                int x = result.getExtra().get("x").getAsInt();
-                int y = result.getExtra().get("y").getAsInt();
-                int z = result.getExtra().get("z").getAsInt();
+                int x = crafter.getBlockX();
+                int y = crafter.getBlockY();
+                int z = crafter.getBlockZ();
                 yield TotemStasis.createMobile(x, y, z);
             }
             case TpStasis.TYPE_FIXED -> {
-                int x = result.getExtra().get("x").getAsInt();
-                int y = result.getExtra().get("y").getAsInt();
-                int z = result.getExtra().get("z").getAsInt();
+                int x = crafter.getBlockX();
+                int y = crafter.getBlockY();
+                int z = crafter.getBlockZ();
                 yield TpStasis.createFixed(crafter.getUuid(), x, y, z);
             }
             case TpStasis.TYPE_MOBILE -> {
-                int x = result.getExtra().get("x").getAsInt();
-                int y = result.getExtra().get("y").getAsInt();
-                int z = result.getExtra().get("z").getAsInt();
+                int x = crafter.getBlockX();
+                int y = crafter.getBlockY();
+                int z = crafter.getBlockZ();
                 yield TpStasis.createMobile(x, y, z);
             }
             case Wolves.TYPE_MOBILE -> {
