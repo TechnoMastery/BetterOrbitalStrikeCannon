@@ -55,16 +55,16 @@ public final class ExecutorHandler {
             // ROD
             if (stack.getItem() == Items.FISHING_ROD) {
                 switch (type) {
-                    case Nuke.TYPE -> {
+                    case Nuke.TYPE_FIXED, Nuke.TYPE_MOBILE -> {
                         return Nuke.handle(serverPlayer, uuid, nbt, hand, stack);
                     }
-                    case Stab.TYPE -> {
+                    case Stab.TYPE_FIXED, Stab.TYPE_MOBILE -> {
                         return Stab.handle(serverPlayer, uuid, nbt, hand, stack);
                     }
                     case TpStasis.TYPE_FIXED, TpStasis.TYPE_MOBILE -> {
                         return TpStasis.handle(serverPlayer, uuid, nbt, hand, stack);
                     }
-                    case Wolves.TYPE -> {
+                    case Wolves.TYPE_MOBILE /* , Wolves.TYPE_FIXED */ -> {
                         return Wolves.handle(serverPlayer, uuid, nbt, hand, stack);
                     }
                     case Darkness.TYPE -> {

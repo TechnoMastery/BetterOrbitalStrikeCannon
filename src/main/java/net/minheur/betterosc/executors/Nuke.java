@@ -20,7 +20,9 @@ import net.minecraft.world.World;
 import net.minheur.betterosc.Betterosc;
 import net.minheur.betterosc.ConfigHandler;
 import net.minheur.betterosc.UsedItemsHandler;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Arrays;
 import java.util.Timer;
@@ -28,25 +30,36 @@ import java.util.TimerTask;
 import java.util.UUID;
 
 public final class Nuke {
-    public static final String TYPE = "nuke";
+    public static final String TYPE_FIXED = "nuke_fixed";
+    public static final String TYPE_MOBILE = "nuke_mobile";
 
-    public static ItemStack create(int ringAmount, @Nullable Integer x, @Nullable Integer z) {
+    @Contract("_, null, !null -> fail; _, !null, null -> fail")
+    public static @NonNull ItemStack create(int ringAmount, @Nullable Integer x, @Nullable Integer z) {
+        // check null states
+        if (x == null && z != null) throw new IllegalArgumentException("Both x and z should be either null or non-null !");
+        if (x != null && z == null) throw new IllegalArgumentException("Both x and z should be either null or non-null !");
+
         ItemStack stack = new ItemStack(Items.FISHING_ROD);
         stack.set(DataComponentTypes.CUSTOM_NAME, Text.literal("Nuke shot"));
         stack.set(DataComponentTypes.DAMAGE, stack.getMaxDamage() -1);
 
         NbtCompound nbt = new NbtCompound();
         nbt.putString("uuid", UUID.randomUUID().toString());
-        nbt.putString("oc_type", TYPE);
+
+        if (x == null)
+            nbt.putString("oc_type", TYPE_MOBILE);
+        else {
+            nbt.putString("oc_type", TYPE_FIXED);
+            nbt.putInt("x", x);
+            nbt.putInt("z", z);
+        }
 
         nbt.putInt("ring_amount", ringAmount);
-        if (x != null) nbt.putInt("x", x);
-        if (z != null) nbt.putInt("z", z);
 
         stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
         return stack;
     }
-    public static ItemStack create(int ringAmount) {
+    public static @NonNull ItemStack create(int ringAmount) {
         return create(ringAmount, null, null);
     }
 
@@ -57,12 +70,20 @@ public final class Nuke {
             if (UsedItemsHandler.getUsedItems().contains(itemUUID)) return ActionResult.PASS;
             UsedItemsHandler.getUsedItems().add(itemUUID);
 
-            HitResult hitResult = player.raycast(500.0f, 0.0f, false);
-            if (hitResult.getType() != HitResult.Type.BLOCK) return ActionResult.PASS;
-            BlockPos hitBlock = ((BlockHitResult) hitResult).getBlockPos();
+            int x;
+            int z;
 
-            int x = nbt.getInt("x").orElse(hitBlock.getX());
-            int z = nbt.getInt("z").orElse(hitBlock.getZ());
+            if (nbt.getInt("x").isPresent()) {
+                x = nbt.getInt("x").orElseThrow();
+                z = nbt.getInt("z").orElseThrow();
+            } else {
+                HitResult hitResult = player.raycast(500.0f, 0.0f, false);
+                if (hitResult.getType() != HitResult.Type.BLOCK) return ActionResult.PASS;
+                BlockPos hitBlock = ((BlockHitResult) hitResult).getBlockPos();
+
+                x = hitBlock.getX();
+                z = hitBlock.getZ();
+            }
 
             Integer ringAmount = nbt.getInt("ring_amount").orElse(null);
             if (ringAmount == null) return ActionResult.PASS;

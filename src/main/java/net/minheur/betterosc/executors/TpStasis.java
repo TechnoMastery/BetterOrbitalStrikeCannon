@@ -22,6 +22,7 @@ import net.minheur.betterosc.Betterosc;
 import net.minheur.betterosc.ConfigHandler;
 import net.minheur.betterosc.UsedItemsHandler;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Set;
 import java.util.Timer;
@@ -32,7 +33,7 @@ public final class TpStasis {
     public static final String TYPE_FIXED = "stasis_fixed";
     public static final String TYPE_MOBILE = "stasis_mobile";
 
-    public static ItemStack createFixed(@Nullable UUID target, @Nullable Integer x, @Nullable Integer y, @Nullable Integer z) {
+    public static @NonNull ItemStack createFixed(@Nullable UUID target, int x, int y, int z) {
         ItemStack stack = new ItemStack(Items.FISHING_ROD);
         stack.set(DataComponentTypes.CUSTOM_NAME, Text.literal("Stasis"));
         stack.set(DataComponentTypes.DAMAGE, stack.getMaxDamage() -1);
@@ -40,15 +41,15 @@ public final class TpStasis {
         NbtCompound nbt = new NbtCompound();
         nbt.putString("uuid", UUID.randomUUID().toString());
         nbt.putString("oc_type", target == null ? TYPE_MOBILE : TYPE_FIXED);
-        if (x != null) nbt.putInt("x", x);
-        if (y != null) nbt.putInt("y", y);
-        if (z != null) nbt.putInt("z", z);
+        nbt.putInt("x", x);
+        nbt.putInt("y", y);
+        nbt.putInt("z", z);
         if (target != null) nbt.putString("target", target.toString());
 
         stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
         return stack;
     }
-    public static ItemStack createMobile(@Nullable Integer x, @Nullable Integer y, @Nullable Integer z) {
+    public static @NonNull ItemStack createMobile(int x, int y, int z) {
         return createFixed(null, x, y, z);
     }
 
@@ -106,7 +107,7 @@ public final class TpStasis {
         }
     }
 
-    public static void tp(ServerPlayerEntity player, int x, int y, int z) {
+    public static void tp(@NonNull ServerPlayerEntity player, int x, int y, int z) {
         ServerWorld world = player.getEntityWorld();
         float yaw = player.getYaw();
         float pitch = player.getPitch();

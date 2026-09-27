@@ -18,22 +18,24 @@ import net.minecraft.util.Hand;
 import net.minheur.betterosc.Betterosc;
 import net.minheur.betterosc.ConfigHandler;
 import net.minheur.betterosc.UsedItemsHandler;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
 public final class Wolves {
-    public static final String TYPE = "wolf";
+    public static final String TYPE_FIXED = "wolf_fixed"; // todo
+    public static final String TYPE_MOBILE = "wolf_mobile";
 
-    public static ItemStack create(int wolfAmount) {
+    public static @NonNull ItemStack create(int wolfAmount) {
         ItemStack stack = new ItemStack(Items.FISHING_ROD);
         stack.set(DataComponentTypes.CUSTOM_NAME, Text.literal("Orbital Wolf"));
         stack.set(DataComponentTypes.DAMAGE, stack.getMaxDamage() -1);
         NbtCompound nbt = new NbtCompound();
         nbt.putString("uuid", UUID.randomUUID().toString());
         nbt.putInt("wolf_amount", wolfAmount);
-        nbt.putString("oc_type", TYPE);
+        nbt.putString("oc_type", TYPE_MOBILE);
         stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
         return stack;
     }
@@ -66,7 +68,7 @@ public final class Wolves {
         }
     }
 
-    public static void spawn(ServerPlayerEntity player, int amount) {
+    public static void spawn(@NonNull ServerPlayerEntity player, int amount) {
         ServerWorld world = player.getEntityWorld();
         double x = player.getX();
         double y = player.getY();
