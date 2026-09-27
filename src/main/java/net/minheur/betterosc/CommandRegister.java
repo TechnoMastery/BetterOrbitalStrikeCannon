@@ -212,9 +212,7 @@ public final class CommandRegister {
                                     .then(literal("darkness")
                                             .executes(source -> { // DARKNESS
                                                 if (!(source.getSource().getEntity() instanceof ServerPlayerEntity user)) return 0;
-                                                int duration = ConfigHandler.getConfig().darknessDuration;
-                                                int radius = ConfigHandler.getConfig().darknessRadius;
-                                                ItemStack giveStack = Darkness.create(radius, duration);
+                                                ItemStack giveStack = Darkness.create();
                                                 if (!user.giveItemStack(giveStack)) user.dropItem(giveStack, true);
                                                 source.getSource().sendFeedback(() -> Text.empty()
                                                         .append(Text.literal("Gave you ").formatted(Formatting.DARK_GRAY))
@@ -227,15 +225,13 @@ public final class CommandRegister {
                                             .then(argument("amount", IntegerArgumentType.integer())
                                                     .executes(source -> { // DARKNESS - amount
                                                         if (!(source.getSource().getEntity() instanceof ServerPlayerEntity user)) return 0;
-                                                        int duration = ConfigHandler.getConfig().darknessDuration;
-                                                        int radius = ConfigHandler.getConfig().darknessRadius;
                                                         int amount = IntegerArgumentType.getInteger(source, "amount");
                                                         if (amount <= 0) {
                                                             source.getSource().sendError(Text.literal("Need at least 1 rod!"));
                                                             return 0;
                                                         }
                                                         for (int i = 0; i < amount; i++) {
-                                                            ItemStack toGive = Darkness.create(radius, duration);
+                                                            ItemStack toGive = Darkness.create();
                                                             if (!user.giveItemStack(toGive)) user.dropItem(toGive, true);
                                                         }
                                                         source.getSource().sendFeedback(() -> Text.empty()

@@ -14,6 +14,8 @@ import net.minecraft.util.Hand;
 import net.minheur.betterosc.Betterosc;
 import net.minheur.betterosc.ConfigHandler;
 import net.minheur.betterosc.UsedItemsHandler;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -22,7 +24,7 @@ import java.util.UUID;
 public final class Darkness {
     public static final String TYPE = "darkness";
 
-    public static ItemStack create(int radius, int timeSeconds) {
+    public static @NonNull ItemStack create(@Nullable Integer radius, @Nullable Integer timeSeconds) {
         ItemStack stack = new ItemStack(Items.FISHING_ROD);
         stack.set(DataComponentTypes.CUSTOM_NAME, Text.literal("Darkness rod"));
         stack.set(DataComponentTypes.DAMAGE, stack.getMaxDamage() -1);
@@ -31,11 +33,14 @@ public final class Darkness {
         nbt.putString("uuid", UUID.randomUUID().toString());
         nbt.putString("oc_type", TYPE);
 
-        nbt.putInt("radius", radius);
-        nbt.putInt("duration", timeSeconds);
+        nbt.putInt("radius", radius == null ? ConfigHandler.getConfig().darknessRadius : radius);
+        nbt.putInt("duration", timeSeconds == null ? ConfigHandler.getConfig().darknessDuration : timeSeconds);
 
         stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
         return stack;
+    }
+    public static @NonNull ItemStack create() {
+        return create(null, null);
     }
 
     public static ActionResult handle(ServerPlayerEntity player, UUID itemUUID, NbtCompound nbt, Hand hand, ItemStack stack) {
