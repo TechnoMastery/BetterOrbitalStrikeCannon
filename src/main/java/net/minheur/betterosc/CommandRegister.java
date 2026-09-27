@@ -630,7 +630,7 @@ public final class CommandRegister {
                                     .then(literal("wolves")
                                             .executes(source -> { // WOLVES
                                                 if (!(source.getSource().getEntity() instanceof ServerPlayerEntity user)) return 0;
-                                                ItemStack toGive = Wolves.create(ConfigHandler.getConfig().defaultWolfAmount);
+                                                ItemStack toGive = Wolves.create();
                                                 if (!user.giveItemStack(toGive)) user.dropItem(toGive, true);
                                                 source.getSource().sendFeedback(() -> Text.empty()
                                                                 .append(Text.literal("Gave you ").formatted(Formatting.GREEN))
@@ -649,7 +649,7 @@ public final class CommandRegister {
                                                             return 0;
                                                         }
                                                         for (int i = 0; i < amount; i++) {
-                                                            ItemStack toGive = Wolves.create(ConfigHandler.getConfig().defaultWolfAmount);
+                                                            ItemStack toGive = Wolves.create();
                                                             if (!user.giveItemStack(toGive)) user.dropItem(toGive, true);
                                                         }
                                                         source.getSource().sendFeedback(() -> Text.empty()

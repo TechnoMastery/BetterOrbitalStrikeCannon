@@ -39,6 +39,9 @@ public final class Wolves {
         stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
         return stack;
     }
+    public static @NonNull ItemStack create() {
+        return create(ConfigHandler.getConfig().defaultWolfAmount);
+    }
 
     public static ActionResult handle(ServerPlayerEntity player, UUID itemUUID, NbtCompound nbt, Hand hand, ItemStack stack) {
         if (!UsedItemsHandler.getCastedFishingRods().contains(itemUUID)) {
