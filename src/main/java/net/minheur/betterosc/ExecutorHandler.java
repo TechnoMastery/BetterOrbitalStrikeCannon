@@ -10,7 +10,6 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
-import net.minheur.betterosc.crafts.InvalidCraftArgumentException;
 import net.minheur.betterosc.executors.*;
 import net.minheur.betterosc.recipes.Recipe;
 import org.jetbrains.annotations.Contract;
@@ -19,12 +18,11 @@ import java.util.UUID;
 
 public final class ExecutorHandler {
 
-    @Contract("null, _, _ -> fail; _, null, _ -> fail")
-    public static ItemStack mkFromResultContainer(Recipe.ResultContainer result, ServerPlayerEntity crafter, String[] commandArgs) throws InvalidCraftArgumentException {
+    @Contract("null, _ -> fail; _, null -> fail")
+    public static ItemStack mkFromResultContainer(Recipe.ResultContainer result, ServerPlayerEntity crafter) {
         // handle null and default stack
         if (result == null) throw new IllegalArgumentException("Can't create result for null result container!");
         if (result.getIsByStack()) return result.getAsStack();
-        if (commandArgs == null) commandArgs = new String[0];
 
         if (crafter == null) throw new IllegalArgumentException("Can't have a null crafter player!");
 
