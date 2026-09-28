@@ -67,7 +67,7 @@ public final class ExecutorHandler {
             case Stab.TYPE_FIXED -> {
                 int x = crafter.getBlockX();
                 int z = crafter.getBlockZ();
-                yield Stab.create(x, z);
+                yield Stab.create(x, z, crafter.getEntityWorld().getRegistryKey());
             }
             case Stab.TYPE_MOBILE -> Stab.create();
             case TotemStasis.TYPE_FIXED -> {

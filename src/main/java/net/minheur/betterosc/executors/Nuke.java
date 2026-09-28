@@ -5,7 +5,6 @@ import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.TntEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
@@ -32,6 +31,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
+import static net.minheur.betterosc.executors.ExecutorsHelpers.*;
+
 public final class Nuke {
     public static final String TYPE_FIXED = "nuke_fixed";
     public static final String TYPE_MOBILE = "nuke_mobile";
@@ -39,26 +40,11 @@ public final class Nuke {
     @Contract("_, null, !null, _ -> fail; _, !null, null, _ -> fail; _, null, null, !null -> fail; _, !null, !null, null -> fail")
     public static @NonNull ItemStack create(int ringAmount, @Nullable Integer x, @Nullable Integer z, @Nullable RegistryKey<World> world) {
         // check null states
-        if (x == null && (z != null || world != null)) throw new IllegalArgumentException("Both x, z and world should be either null or non-null !");
-        if (z == null && x != null) throw new IllegalArgumentException("Both x, z and world should be either null or non-null !");
-        if (world == null && x != null) throw new IllegalArgumentException("Both x, z and world should be either null or non-null !");
-
-        ItemStack stack = new ItemStack(Items.FISHING_ROD);
+        checkPositionedArgumentsNullStates(x, z, world);
+        ItemStack stack = mkDefaultRod();
         stack.set(DataComponentTypes.CUSTOM_NAME, Text.literal("Nuke shot"));
-        stack.set(DataComponentTypes.DAMAGE, stack.getMaxDamage() -1);
 
-        NbtCompound nbt = new NbtCompound();
-        nbt.putString("uuid", UUID.randomUUID().toString());
-
-        if (x == null)
-            nbt.putString("oc_type", TYPE_MOBILE);
-        else {
-            nbt.putString("oc_type", TYPE_FIXED);
-            nbt.putInt("x", x);
-            nbt.putInt("z", z);
-            nbt.putString("dim", world.getValue().toString());
-        }
-
+        NbtCompound nbt = mkPositionedNbt(x, z, world, TYPE_MOBILE, TYPE_FIXED);
         nbt.putInt("ring_amount", ringAmount);
 
         stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));

@@ -5,13 +5,15 @@ import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.TntEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
@@ -27,36 +29,26 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
+import static net.minheur.betterosc.executors.ExecutorsHelpers.checkPositionedArgumentsNullStates;
+import static net.minheur.betterosc.executors.ExecutorsHelpers.mkDefaultRod;
+
 public final class Stab {
     public static final String TYPE_FIXED = "stab_fixed";
     public static final String TYPE_MOBILE = "stab_mobile";
 
-    @Contract("null, !null -> fail; !null, null -> fail")
-    public static @NonNull ItemStack create(@Nullable Integer x, @Nullable Integer z) {
+    @Contract("null, !null, _ -> fail; !null, null, _ -> fail; null, null, !null -> fail; !null, !null, null -> fail")
+    public static @NonNull ItemStack create(@Nullable Integer x, @Nullable Integer z, @Nullable RegistryKey<World> world) {
         // check null states
-        if (x == null && z != null) throw new IllegalArgumentException("Both x and z should be either null or non-null !");
-        if (x != null && z == null) throw new IllegalArgumentException("Both x and z should be either null or non-null !");
-
-        ItemStack stack = new ItemStack(Items.FISHING_ROD);
+        checkPositionedArgumentsNullStates(x, z, world);
+        ItemStack stack = mkDefaultRod();
         stack.set(DataComponentTypes.CUSTOM_NAME, Text.literal("Stab Shot"));
-        stack.set(DataComponentTypes.DAMAGE, stack.getMaxDamage() -1);
 
-        NbtCompound nbt = new NbtCompound();
-        nbt.putString("uuid", UUID.randomUUID().toString());
-
-        if (x == null)
-            nbt.putString("oc_type", TYPE_MOBILE);
-        else {
-            nbt.putString("oc_type", TYPE_FIXED);
-            nbt.putInt("x", x);
-            nbt.putInt("z", z);
-        }
-
+        NbtCompound nbt = ExecutorsHelpers.mkPositionedNbt(x, z, world, TYPE_MOBILE, TYPE_FIXED);
         stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
         return stack;
     }
     public static @NonNull ItemStack create() {
-        return create(null, null);
+        return create(null, null, null);
     }
 
     public static ActionResult handle(ServerPlayerEntity player, UUID itemUUID, NbtCompound nbt, Hand hand, ItemStack stack) {
@@ -66,12 +58,21 @@ public final class Stab {
             if (UsedItemsHandler.getUsedItems().contains(itemUUID)) return ActionResult.PASS;
             UsedItemsHandler.getUsedItems().add(itemUUID);
 
-            int x;
-            int z;
+            ServerWorld world = player.getEntityWorld();
+
+            int x, z;
+            ServerWorld targetWorld;
 
             if (nbt.getInt("x").isPresent()) {
                 x = nbt.getInt("x").orElseThrow();
                 z = nbt.getInt("z").orElseThrow();
+
+                String targetWorldKeyString = nbt.getString("dim", null);
+                RegistryKey<World> key = RegistryKey.of(
+                        RegistryKeys.WORLD,
+                        Identifier.of(targetWorldKeyString)
+                );
+                targetWorld = world.getServer().getWorld(key);
             } else {
                 HitResult hitResult = player.raycast(500.0f, 0.0f, false);
                 if (hitResult.getType() != HitResult.Type.BLOCK) return ActionResult.PASS;
@@ -79,15 +80,15 @@ public final class Stab {
 
                 x = hitBlock.getX();
                 z = hitBlock.getZ();
+                targetWorld = world;
             }
 
-            ServerWorld world = player.getEntityWorld();
             long delay = (long) (ConfigHandler.getConfig().rodCastDelay * 1000.0f);
 
             world.getServer().execute(() -> new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    world.getServer().execute(() -> spawn(world, x, z));
+                    world.getServer().execute(() -> spawn(targetWorld, x, z));
                 }
             }, delay));
 

@@ -480,7 +480,7 @@ public final class CommandRegister {
                                                                 }
                                                                 Vec2f target = Vec2ArgumentType.getVec2(source, "target");
                                                                 for (int i = 0; i < amount; i++) {
-                                                                    ItemStack toGive = Stab.create((int) target.x, (int) target.y);
+                                                                    ItemStack toGive = Stab.create((int) target.x, (int) target.y, user.getEntityWorld().getRegistryKey());
                                                                     if (!user.giveItemStack(toGive)) user.dropItem(toGive, true);
                                                                 }
                                                                 source.getSource().sendFeedback(() -> Text.empty()
