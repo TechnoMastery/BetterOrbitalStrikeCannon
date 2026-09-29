@@ -5,13 +5,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
@@ -36,7 +29,7 @@ public final class ExecutorsHelpers {
     }
 
     @Contract("_,_,_,_,_ -> new")
-    static @NonNull NbtCompound mkPositionedNbt(Integer x, Integer z, RegistryKey<World> world, String typeMobile, String typeFixed) {
+    static @NonNull NbtCompound nullableXZNbt(Integer x, Integer z, RegistryKey<World> world, String typeMobile, String typeFixed) {
         NbtCompound nbt = new NbtCompound();
         nbt.putString("uuid", UUID.randomUUID().toString());
 

@@ -43,7 +43,7 @@ public final class Stab {
         ItemStack stack = mkDefaultRod();
         stack.set(DataComponentTypes.CUSTOM_NAME, Text.literal("Stab Shot"));
 
-        NbtCompound nbt = ExecutorsHelpers.mkPositionedNbt(x, z, world, TYPE_MOBILE, TYPE_FIXED);
+        NbtCompound nbt = ExecutorsHelpers.nullableXZNbt(x, z, world, TYPE_MOBILE, TYPE_FIXED);
         stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
         return stack;
     }

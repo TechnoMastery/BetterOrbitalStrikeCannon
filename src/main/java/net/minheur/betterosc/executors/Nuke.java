@@ -44,7 +44,7 @@ public final class Nuke {
         ItemStack stack = mkDefaultRod();
         stack.set(DataComponentTypes.CUSTOM_NAME, Text.literal("Nuke shot"));
 
-        NbtCompound nbt = mkPositionedNbt(x, z, world, TYPE_MOBILE, TYPE_FIXED);
+        NbtCompound nbt = nullableXZNbt(x, z, world, TYPE_MOBILE, TYPE_FIXED);
         nbt.putInt("ring_amount", ringAmount);
 
         stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
