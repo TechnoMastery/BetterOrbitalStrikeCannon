@@ -3,7 +3,6 @@ package net.minheur.betterosc.executors;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ChargedProjectilesComponent;
 import net.minecraft.component.type.NbtComponent;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -13,10 +12,9 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minheur.betterosc.Betterosc;
 import net.minheur.betterosc.ConfigHandler;
 import net.minheur.betterosc.UsedItemsHandler;
 import org.jspecify.annotations.NonNull;
@@ -78,10 +76,7 @@ public final class Railgun {
         }, delay));
 
         stack.set(DataComponentTypes.CHARGED_PROJECTILES, ChargedProjectilesComponent.DEFAULT);
-        player.sendEquipmentBreakStatus(stack.getItem(), hand == Hand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
-
-        if (hand == Hand.MAIN_HAND) player.getInventory().setStack(player.getInventory().getSlotWithStack(stack), ItemStack.EMPTY);
-        else player.getInventory().setStack(player.getInventory().size() - 1, ItemStack.EMPTY);
+        Betterosc.breakOrbitalCallItem(player, hand, stack);
 
         return ActionResult.CONSUME;
     }
