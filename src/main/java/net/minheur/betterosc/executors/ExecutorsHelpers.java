@@ -45,4 +45,15 @@ public final class ExecutorsHelpers {
         return nbt;
     }
 
+    static @NonNull NbtCompound worldXYZNbt(int x, int y, int z, @NonNull RegistryKey<World> world, @NonNull String type) {
+        NbtCompound nbt = new NbtCompound();
+        nbt.putString("uuid", UUID.randomUUID().toString());
+        nbt.putString("oc_type", type);
+        nbt.putInt("x", x);
+        nbt.putInt("y", y);
+        nbt.putInt("z", z);
+        nbt.putString("dim", world.getValue().toString());
+        return nbt;
+    }
+
 }

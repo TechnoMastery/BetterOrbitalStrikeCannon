@@ -33,6 +33,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
+import static net.minheur.betterosc.executors.ExecutorsHelpers.worldXYZNbt;
+
 public final class TpStasis {
     public static final String TYPE_FIXED = "stasis_fixed";
     public static final String TYPE_MOBILE = "stasis_mobile";
@@ -42,13 +44,7 @@ public final class TpStasis {
         stack.set(DataComponentTypes.CUSTOM_NAME, Text.literal("Stasis"));
         stack.set(DataComponentTypes.DAMAGE, stack.getMaxDamage() -1);
 
-        NbtCompound nbt = new NbtCompound();
-        nbt.putString("uuid", UUID.randomUUID().toString());
-        nbt.putString("oc_type", target == null ? TYPE_MOBILE : TYPE_FIXED);
-        nbt.putInt("x", x);
-        nbt.putInt("y", y);
-        nbt.putInt("z", z);
-        nbt.putString("dim", world.getValue().toString());
+        NbtCompound nbt = worldXYZNbt(x, y, z, world, target == null ? TYPE_MOBILE : TYPE_FIXED);
         if (target != null) nbt.putString("target", target.toString());
 
         stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
