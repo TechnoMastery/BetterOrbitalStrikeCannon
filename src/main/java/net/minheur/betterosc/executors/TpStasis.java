@@ -115,14 +115,14 @@ public final class TpStasis {
         }
     }
 
-    public static void tp(@NonNull ServerWorld world, @NonNull ServerPlayerEntity player, int x, int y, int z) {
+    public static void tp(@NonNull ServerWorld targetWorld, @NonNull ServerPlayerEntity player, int x, int y, int z) {
         float yaw = player.getYaw();
         float pitch = player.getPitch();
         Vec3d currentPos = new Vec3d(player.getX(), player.getY(), player.getZ());
-        world.playSound(null, currentPos.x, currentPos.y, currentPos.z, SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 1.0F, 1.0F);
-        world.spawnParticles(ParticleTypes.PORTAL, currentPos.x, currentPos.y + (double) 1.0F, currentPos.z, 50, 0.5F, 0.5F, 0.5F, 0.5F);
-        player.teleport(world, (double)x + (double)0.5F, y, (double)z + (double)0.5F, Set.of(), yaw, pitch, true);
-        world.playSound(null, (double)x + (double)0.5F, y, (double)z + (double)0.5F, SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 1.0F, 1.0F);
-        world.spawnParticles(ParticleTypes.PORTAL, (double)x + (double)0.5F, y + 1, (double)z + (double)0.5F, 50, 0.5F, 0.5F, 0.5F, 0.5F);
+        player.getEntityWorld().playSound(null, currentPos.x, currentPos.y, currentPos.z, SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 1.0F, 1.0F);
+        player.getEntityWorld().spawnParticles(ParticleTypes.PORTAL, currentPos.x, currentPos.y + (double) 1.0F, currentPos.z, 50, 0.5F, 0.5F, 0.5F, 0.5F);
+        player.teleport(targetWorld, (double)x + (double)0.5F, y, (double)z + (double)0.5F, Set.of(), yaw, pitch, true);
+        targetWorld.playSound(null, (double)x + (double)0.5F, y, (double)z + (double)0.5F, SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 1.0F, 1.0F);
+        targetWorld.spawnParticles(ParticleTypes.PORTAL, (double)x + (double)0.5F, y + 1, (double)z + (double)0.5F, 50, 0.5F, 0.5F, 0.5F, 0.5F);
     }
 }
