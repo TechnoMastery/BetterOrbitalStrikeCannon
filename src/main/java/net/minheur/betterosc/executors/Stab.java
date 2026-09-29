@@ -96,7 +96,7 @@ public final class Stab {
 
         } else {
             UsedItemsHandler.getCastedFishingRods().remove(itemUUID);
-            Betterosc.breakFishingRod(player, hand, stack);
+            Betterosc.breakOrbitalCallItem(player, hand, stack);
             return ActionResult.SUCCESS;
         }
     }

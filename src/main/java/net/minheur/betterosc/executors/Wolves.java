@@ -85,7 +85,7 @@ public final class Wolves {
             return ActionResult.PASS;
         } else {
             UsedItemsHandler.getCastedFishingRods().remove(itemUUID);
-            Betterosc.breakFishingRod(player, hand, stack);
+            Betterosc.breakOrbitalCallItem(player, hand, stack);
             return ActionResult.SUCCESS;
         }
     }

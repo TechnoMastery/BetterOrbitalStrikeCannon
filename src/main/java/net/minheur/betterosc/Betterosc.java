@@ -36,7 +36,7 @@ public final class Betterosc implements ModInitializer {
         TankCommands.register();
     }
 
-    public static void breakFishingRod(ServerPlayerEntity player, Hand hand, ItemStack stack) {
+    public static void breakOrbitalCallItem(ServerPlayerEntity player, Hand hand, ItemStack stack) {
         player.sendEquipmentBreakStatus(stack.getItem(), hand == Hand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
         if (hand == Hand.MAIN_HAND) {
             player.getInventory().setStack(player.getInventory().getSlotWithStack(stack), ItemStack.EMPTY);
