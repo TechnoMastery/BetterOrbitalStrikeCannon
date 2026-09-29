@@ -15,12 +15,12 @@ import java.util.UUID;
 public final class ExecutorsHelpers {
 
     @Contract("null, !null, _ -> fail; null, null, !null -> fail; !null, null, _ -> fail; !null, !null, null -> fail")
-    static @NonNull ItemStack checkPositionedArgumentsNullStates(@Nullable Integer x, @Nullable Integer z, @Nullable RegistryKey<World> world) {
+    static void checkPositionedArgumentsNullStates(@Nullable Integer x, @Nullable Integer z, @Nullable RegistryKey<World> world) {
         if (x == null && (z != null || world != null)) throw new IllegalArgumentException("Both x, z and world should be either null or non-null !");
         if (z == null && x != null) throw new IllegalArgumentException("Both x, z and world should be either null or non-null !");
         if (world == null && x != null) throw new IllegalArgumentException("Both x, z and world should be either null or non-null !");
 
-        return new ItemStack(Items.FISHING_ROD);
+        new ItemStack(Items.FISHING_ROD);
     }
     static @NonNull ItemStack mkDefaultRod() {
         ItemStack stack = new ItemStack(Items.FISHING_ROD);

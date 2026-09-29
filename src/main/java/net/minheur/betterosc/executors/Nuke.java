@@ -149,7 +149,7 @@ public final class Nuke {
                 double dz = Math.sin(angle);
                 double vx = dx * ((double) radius / (double) fuse) * velocityMultiplier;
                 double vz = dz * ((double) radius / (double) fuse) * velocityMultiplier;
-                TntEntity tnt = new TntEntity(world, (double)centerX + (double)0.5F, centerY, (double)centerZ + (double)0.5F, (LivingEntity)null);
+                TntEntity tnt = new TntEntity(world, (double)centerX + (double)0.5F, centerY, (double)centerZ + (double)0.5F, null);
                 tnt.setFuse(fuse);
                 tnt.setVelocity(vx, gravity, vz);
                 world.spawnEntity(tnt);

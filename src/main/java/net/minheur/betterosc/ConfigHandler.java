@@ -57,25 +57,25 @@ public final class ConfigHandler {
 
     public static class ConfigData {
         // illegal tank
-        public List<String> illegalTanksItems = List.of(
+        public final List<String> illegalTanksItems = List.of(
                 "minecraft:bedrock", "minecraft:barrier", "minecraft:command_block", "minecraft:structure_block",
                 "minecraft:chain_command_block", "minecraft:repeat_command_block"
         );
 
-        public double rodCastDelay = 0.75f;
+        public final double rodCastDelay = 0.75f;
 
         // railgun
-        public double railgunDelay = 4f;
-        public double railgunArrowVelocity = 1500f;
-        public double railgunSpreadRadius = 1.0f;
+        public final double railgunDelay = 4f;
+        public final double railgunArrowVelocity = 1500f;
+        public final double railgunSpreadRadius = 1.0f;
         // wolf
-        public int defaultWolfAmount = 150;
+        public final int defaultWolfAmount = 150;
         // darkness
-        public int darknessRadius = 25;
-        public int darknessDuration = 5;
+        public final int darknessRadius = 25;
+        public final int darknessDuration = 5;
         // nuke
-        public int nukeRingAmount = 10;
+        public final int nukeRingAmount = 10;
         // crash pig
-        public int pigAmount = 5000;
+        public final int pigAmount = 5000;
     }
 }
