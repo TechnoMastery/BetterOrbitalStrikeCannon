@@ -80,8 +80,12 @@ public record Recipe(String recipeId, ResultContainer result, List<IngredientMat
     private static @NonNull ResultContainer decodeResult(@NonNull JsonObject object) {
         // decode as 'osc' item, if applicable
         String id = object.getAsJsonObject().get("id").getAsString();
-        if (id.startsWith("betterosc:"))
-            return new ResultContainer(id.substring(id.indexOf(':') +1), object.getAsJsonObject("extra"));
+        if (id.startsWith("betterosc:")) {
+            JsonObject extra = object.has("extra") ?
+                    object.getAsJsonObject("extra") :
+                    new JsonObject();
+            return new ResultContainer(id.substring(id.indexOf(':') +1), extra);
+        }
 
         return new ResultContainer(decodeStack(object));
     }
