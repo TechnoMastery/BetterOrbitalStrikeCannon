@@ -6,6 +6,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -14,10 +16,12 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minheur.betterosc.Betterosc;
 import net.minheur.betterosc.ConfigHandler;
 import net.minheur.betterosc.UsedItemsHandler;
@@ -33,7 +37,7 @@ public final class TpStasis {
     public static final String TYPE_FIXED = "stasis_fixed";
     public static final String TYPE_MOBILE = "stasis_mobile";
 
-    public static @NonNull ItemStack createFixed(@Nullable UUID target, int x, int y, int z) {
+    public static @NonNull ItemStack createFixed(@Nullable UUID target, int x, int y, int z, @NonNull RegistryKey<World> world) {
         ItemStack stack = new ItemStack(Items.FISHING_ROD);
         stack.set(DataComponentTypes.CUSTOM_NAME, Text.literal("Stasis"));
         stack.set(DataComponentTypes.DAMAGE, stack.getMaxDamage() -1);
@@ -44,13 +48,14 @@ public final class TpStasis {
         nbt.putInt("x", x);
         nbt.putInt("y", y);
         nbt.putInt("z", z);
+        nbt.putString("dim", world.getValue().toString());
         if (target != null) nbt.putString("target", target.toString());
 
         stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
         return stack;
     }
-    public static @NonNull ItemStack createMobile(int x, int y, int z) {
-        return createFixed(null, x, y, z);
+    public static @NonNull ItemStack createMobile(int x, int y, int z, @NonNull RegistryKey<World> world) {
+        return createFixed(null, x, y, z, world);
     }
 
     public static ActionResult handle(ServerPlayerEntity player, UUID itemUUID, NbtCompound nbt, Hand hand, ItemStack stack) {
@@ -60,13 +65,21 @@ public final class TpStasis {
             if (UsedItemsHandler.getUsedItems().contains(itemUUID)) return ActionResult.PASS;
             UsedItemsHandler.getUsedItems().add(itemUUID);
 
+            ServerWorld world = player.getEntityWorld();
+            MinecraftServer server = world.getServer();
+
             Integer x = nbt.getInt("x").orElse(null);
             Integer y = nbt.getInt("y").orElse(null);
             Integer z = nbt.getInt("z").orElse(null);
 
-            String type = nbt.getString("oc_type").orElse("");
+            String worldKey = nbt.getString("dim", null);
+            if (worldKey == null) return ActionResult.PASS;
+            ServerWorld targetWorld = server.getWorld(RegistryKey.of(
+                    RegistryKeys.WORLD,
+                    Identifier.of(worldKey)
+            ));
 
-            MinecraftServer server = player.getEntityWorld().getServer();
+            String type = nbt.getString("oc_type").orElse("");
 
             ServerPlayerEntity tpTarget = switch (type) {
                 case TYPE_FIXED -> {
@@ -77,7 +90,8 @@ public final class TpStasis {
                 case TYPE_MOBILE -> player;
                 default -> null;
             };
-            if (tpTarget == null) return ActionResult.PASS;
+
+            if (tpTarget == null || targetWorld == null) return ActionResult.PASS;
 
             HitResult hitResults = player.raycast(256.0f, 0.0f, false);
             if (hitResults.getType() == HitResult.Type.BLOCK) {
@@ -87,15 +101,13 @@ public final class TpStasis {
                 if (z == null) z = tpPos.getZ();
             } else if (x == null || y == null || z == null) return ActionResult.PASS;
 
-            Integer finalX = x;
-            Integer finalY = y;
-            Integer finalZ = z;
+            Integer finalX = x, finalY = y, finalZ = z;
 
             long delay = (long) (ConfigHandler.getConfig().rodCastDelay * 1000.0f);
             server.execute(() -> new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    server.execute(() -> tp(tpTarget, finalX, finalY, finalZ));
+                    server.execute(() -> tp(targetWorld, tpTarget, finalX, finalY, finalZ));
                 }
             }, delay));
 
@@ -107,8 +119,7 @@ public final class TpStasis {
         }
     }
 
-    public static void tp(@NonNull ServerPlayerEntity player, int x, int y, int z) {
-        ServerWorld world = player.getEntityWorld();
+    public static void tp(@NonNull ServerWorld world, @NonNull ServerPlayerEntity player, int x, int y, int z) {
         float yaw = player.getYaw();
         float pitch = player.getPitch();
         Vec3d currentPos = new Vec3d(player.getX(), player.getY(), player.getZ());

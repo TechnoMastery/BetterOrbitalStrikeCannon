@@ -567,7 +567,7 @@ public final class CommandRegister {
                                                     .executes(source -> { // STASIS
                                                         if (!(source.getSource().getEntity() instanceof ServerPlayerEntity user)) return 0;
                                                         Vec3d pos = Vec3ArgumentType.getVec3(source, "pos");
-                                                        ItemStack toGive = TpStasis.createMobile((int) pos.x, (int) pos.y, (int) pos.z);
+                                                        ItemStack toGive = TpStasis.createMobile((int) pos.x, (int) pos.y, (int) pos.z, user.getEntityWorld().getRegistryKey());
                                                         if (!user.giveItemStack(toGive)) user.dropItem(toGive, true);
                                                         source.getSource().sendFeedback(() -> Text.empty()
                                                                         .append(Text.literal("Gave you ").formatted(Formatting.GRAY))
@@ -587,7 +587,7 @@ public final class CommandRegister {
                                                                     return 0;
                                                                 }
                                                                 for (int i = 0; i < amount; i++) {
-                                                                    ItemStack toGive = TpStasis.createMobile((int) pos.x, (int) pos.y, (int) pos.z);
+                                                                    ItemStack toGive = TpStasis.createMobile((int) pos.x, (int) pos.y, (int) pos.z, user.getEntityWorld().getRegistryKey());
                                                                     if (!user.giveItemStack(toGive)) user.dropItem(toGive, true);
                                                                 }
                                                                 source.getSource().sendFeedback(() -> Text.empty()
@@ -609,7 +609,7 @@ public final class CommandRegister {
                                                                         }
                                                                         ServerPlayerEntity target = EntityArgumentType.getPlayer(source, "target");
                                                                         for (int i = 0; i < amount; i++) {
-                                                                            ItemStack toGive = TpStasis.createFixed(target.getUuid(), (int) pos.x, (int) pos.y, (int) pos.z);
+                                                                            ItemStack toGive = TpStasis.createFixed(target.getUuid(), (int) pos.x, (int) pos.y, (int) pos.z, user.getEntityWorld().getRegistryKey());
                                                                             if (!user.giveItemStack(toGive)) user.dropItem(toGive, true);
                                                                         }
                                                                         source.getSource().sendFeedback(() -> Text.empty()
