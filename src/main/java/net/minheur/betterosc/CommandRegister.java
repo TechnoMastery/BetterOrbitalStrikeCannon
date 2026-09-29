@@ -502,7 +502,7 @@ public final class CommandRegister {
                                                     .executes(source -> { // TOTEM
                                                         if (!(source.getSource().getEntity() instanceof ServerPlayerEntity user)) return 0;
                                                         Vec3d pos = Vec3ArgumentType.getVec3(source, "pos");
-                                                        ItemStack toGive = TotemStasis.createMobile((int) pos.x, (int) pos.y, (int) pos.z);
+                                                        ItemStack toGive = TotemStasis.createMobile((int) pos.x, (int) pos.y, (int) pos.z, user.getEntityWorld().getRegistryKey());
                                                         if (!user.giveItemStack(toGive)) user.dropItem(toGive, true);
                                                         source.getSource().sendFeedback(() -> Text.empty()
                                                                         .append(Text.literal("Gave you ").formatted(Formatting.GOLD))
@@ -522,7 +522,7 @@ public final class CommandRegister {
                                                                     return 0;
                                                                 }
                                                                 for (int i = 0; i < amount; i++) {
-                                                                    ItemStack toGive = TotemStasis.createMobile((int) pos.x, (int) pos.y, (int) pos.z);
+                                                                    ItemStack toGive = TotemStasis.createMobile((int) pos.x, (int) pos.y, (int) pos.z, user.getEntityWorld().getRegistryKey());
                                                                     if (!user.giveItemStack(toGive)) user.dropItem(toGive, true);
                                                                 }
                                                                 source.getSource().sendFeedback(() -> Text.empty()
@@ -544,7 +544,7 @@ public final class CommandRegister {
                                                                         }
                                                                         ServerPlayerEntity target = EntityArgumentType.getPlayer(source, "target");
                                                                         for (int i = 0; i < amount; i++) {
-                                                                            ItemStack toGive = TotemStasis.createFixed(target.getUuid(), (int) pos.x, (int) pos.y, (int) pos.z);
+                                                                            ItemStack toGive = TotemStasis.createFixed(target.getUuid(), (int) pos.x, (int) pos.y, (int) pos.z, user.getEntityWorld().getRegistryKey());
                                                                             if (!user.giveItemStack(toGive)) user.dropItem(toGive, true);
                                                                         }
                                                                         source.getSource().sendFeedback(() -> Text.empty()
