@@ -74,25 +74,25 @@ public final class ExecutorHandler {
                 int x = crafter.getBlockX();
                 int y = crafter.getBlockY();
                 int z = crafter.getBlockZ();
-                yield TotemStasis.createFixed(crafter.getUuid(), x, y, z);
+                yield TotemStasis.createFixed(crafter.getUuid(), x, y, z, crafter.getEntityWorld().getRegistryKey());
             }
             case TotemStasis.TYPE_MOBILE -> {
                 int x = crafter.getBlockX();
                 int y = crafter.getBlockY();
                 int z = crafter.getBlockZ();
-                yield TotemStasis.createMobile(x, y, z);
+                yield TotemStasis.createMobile(x, y, z, crafter.getEntityWorld().getRegistryKey());
             }
             case TpStasis.TYPE_FIXED -> {
                 int x = crafter.getBlockX();
                 int y = crafter.getBlockY();
                 int z = crafter.getBlockZ();
-                yield TpStasis.createFixed(crafter.getUuid(), x, y, z);
+                yield TpStasis.createFixed(crafter.getUuid(), x, y, z, crafter.getEntityWorld().getRegistryKey());
             }
             case TpStasis.TYPE_MOBILE -> {
                 int x = crafter.getBlockX();
                 int y = crafter.getBlockY();
                 int z = crafter.getBlockZ();
-                yield TpStasis.createMobile(x, y, z);
+                yield TpStasis.createMobile(x, y, z, crafter.getEntityWorld().getRegistryKey());
             }
             case Wolves.TYPE_MOBILE -> {
                 JsonElement amount = result.getExtra().get("amount");
