@@ -2,6 +2,7 @@ package net.minheur.betterosc.recipes;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.item.ItemStack;
@@ -163,7 +164,10 @@ public record Recipe(String recipeId, ResultContainer result, List<IngredientMat
 
             for (Map.Entry<String, JsonElement> entry : forbidden.entrySet()) {
                 if (shouldIgnore(entry.getKey())) continue;
-                if (jsonContains(serialized, entry.getValue())) return false;
+                boolean contains = entry.getValue().isJsonNull()
+                        ? jsonContainsPath(serialized, entry.getKey())
+                        : jsonContains(serialized, entry.getValue());
+                if (contains) return false;
             }
 
             return true;
@@ -193,7 +197,7 @@ public record Recipe(String recipeId, ResultContainer result, List<IngredientMat
 
                 if (forbiddenValue.isJsonArray()) {
                     for (JsonElement element : forbiddenValue.getAsJsonArray())
-                        forbidden.put(element.getAsString(), element);
+                        forbidden.put(element.getAsString(), JsonNull.INSTANCE);
 
                 } else if (forbiddenValue.isJsonObject()) {
                     JsonObject forbiddenJson = forbiddenValue.getAsJsonObject();
@@ -285,5 +289,14 @@ public record Recipe(String recipeId, ResultContainer result, List<IngredientMat
         }
 
         return root.equals(expected);
+    }
+
+    private static boolean jsonContainsPath(JsonElement root, String path) {
+        JsonElement current = root;
+        for (String key : path.split("\\.")) {
+            if (!current.isJsonObject() || !current.getAsJsonObject().has(key)) return false;
+            current = current.getAsJsonObject().get(key);
+        }
+        return true;
     }
 }
