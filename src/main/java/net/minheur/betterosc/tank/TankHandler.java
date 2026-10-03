@@ -7,24 +7,27 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 public final class TankHandler {
     private static final String TANK_TYPE = "tank";
     private static final String TYPE_KEY = "oc_type";
     private static final String UUID_KEY = "tank_uuid";
 
-    private static final Map<UUID, TankContent> TANKS = new ConcurrentHashMap<>();
+    public static TankDataSaver tankState;
 
-    public static Map<UUID, TankContent> getTanks() {
-        return TANKS;
+    public static void loadTanks(@NonNull MinecraftServer server) {
+        tankState = TankDataSaver.get(server.getOverworld());
+    }
+    public static void unloadTanks(MinecraftServer server) {
+        tankState = null;
     }
 
     public static boolean isTank(ItemStack stack) {
@@ -46,7 +49,7 @@ public final class TankHandler {
 
         UUID tankUuid = UUID.randomUUID();
         ItemStack storedStack = content.copyWithCount(1);
-        TANKS.put(tankUuid, new TankContent(storedStack, content.getCount()));
+        tankState.setTank(tankUuid, new TankContent(storedStack, content.getCount()));
 
         return buildTankFromUUID(tankUuid);
     }
@@ -70,7 +73,7 @@ public final class TankHandler {
 
         UUID tankUUID = getTankUUID(tank);
 
-        TankContent content = TANKS.get(tankUUID);
+        TankContent content = tankState.getTanks().get(tankUUID);
         Item stored = content.item().getItem();
         long amount = content.amount();
 

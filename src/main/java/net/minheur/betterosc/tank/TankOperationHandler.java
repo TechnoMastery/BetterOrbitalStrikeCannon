@@ -11,7 +11,7 @@ public final class TankOperationHandler {
         if (!TankHandler.isTank(tank)) throw new IllegalArgumentException("Incrementing on non-tank item!");
 
         UUID uuid = TankHandler.getTankUUID(tank);
-        TankContent actualContent = TankHandler.getTanks().get(uuid);
+        TankContent actualContent = TankHandler.tankState.getTanks().get(uuid);
         if (actualContent == null) throw new IllegalStateException("Tank content is null!");
 
         if (actualContent.amount() > Long.MAX_VALUE - amount) return OperationResults.TOO_MUCH;
@@ -20,7 +20,7 @@ public final class TankOperationHandler {
                 actualContent.item(),
                 actualContent.amount() + amount
         );
-        TankHandler.getTanks().put(uuid, newContent);
+        TankHandler.tankState.setTank(uuid, newContent);
         TankHandler.updateTankDisplay(tank);
 
         return OperationResults.SUCCESS;
@@ -57,12 +57,12 @@ public final class TankOperationHandler {
         if (!TankHandler.isTank(tank)) throw new IllegalArgumentException("Incrementing on non-tank item!");
 
         UUID uuid = TankHandler.getTankUUID(tank);
-        TankContent actualContent = TankHandler.getTanks().get(uuid);
+        TankContent actualContent = TankHandler.tankState.getTanks().get(uuid);
         if (actualContent == null) throw new IllegalStateException("Tank content is null!");
 
         if (actualContent.amount() < amount) return OperationResults.NOT_ENOUGH;
         if (actualContent.amount() == amount) {
-            TankHandler.getTanks().remove(uuid);
+            TankHandler.tankState.removeTank(uuid);
             return OperationResults.EMPTIED;
         }
 
@@ -70,7 +70,7 @@ public final class TankOperationHandler {
                 actualContent.item(),
                 actualContent.amount() - amount
         );
-        TankHandler.getTanks().put(uuid, newContent);
+        TankHandler.tankState.setTank(uuid, newContent);
         TankHandler.updateTankDisplay(tank);
 
         return OperationResults.SUCCESS;
@@ -80,7 +80,7 @@ public final class TankOperationHandler {
         if (!TankHandler.isTank(tank)) throw new IllegalArgumentException("Getting content on non-tank item!");
 
         UUID uuid = TankHandler.getTankUUID(tank);
-        TankContent content = TankHandler.getTanks().get(uuid);
+        TankContent content = TankHandler.tankState.getTanks().get(uuid);
         if (content == null) throw new IllegalStateException("Tank content is null!");
 
         return content.item();
@@ -89,7 +89,7 @@ public final class TankOperationHandler {
         if (!TankHandler.isTank(tank)) throw new IllegalArgumentException("Incrementing on non-tank item!");
 
         UUID uuid = TankHandler.getTankUUID(tank);
-        TankContent content = TankHandler.getTanks().get(uuid);
+        TankContent content = TankHandler.tankState.getTanks().get(uuid);
         if (content == null) throw new IllegalStateException("Tank content is null!");
 
         return content.amount();

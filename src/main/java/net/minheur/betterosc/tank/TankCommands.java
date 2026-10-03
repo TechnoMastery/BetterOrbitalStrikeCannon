@@ -188,7 +188,7 @@ public final class TankCommands {
                                             if (!(source.getSource().getEntity() instanceof ServerPlayerEntity user)) return 0;
                                             UUID targetTank = UuidArgumentType.getUuid(source, "uuid");
 
-                                            if (!TankHandler.getTanks().containsKey(targetTank)) {
+                                            if (!TankHandler.tankState.getTanks().containsKey(targetTank)) {
                                                 source.getSource().sendError(Text.literal("This tank doesn't exists!"));
                                                 return 0;
                                             }

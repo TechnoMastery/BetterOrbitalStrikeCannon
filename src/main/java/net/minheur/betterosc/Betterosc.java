@@ -10,6 +10,7 @@ import net.minecraft.util.Hand;
 import net.minheur.betterosc.crafts.DefaultRecipesHandler;
 import net.minheur.betterosc.recipes.RecipesHandler;
 import net.minheur.betterosc.tank.TankCommands;
+import net.minheur.betterosc.tank.TankHandler;
 
 import java.nio.file.Path;
 
@@ -31,6 +32,9 @@ public final class Betterosc implements ModInitializer {
             ConfigHandler.save();
             UsedItemsHandler.save();
         });
+
+        ServerLifecycleEvents.SERVER_STARTED.register(TankHandler::loadTanks);
+        ServerLifecycleEvents.SERVER_STOPPING.register(TankHandler::unloadTanks);
 
         CommandRegister.register();
         TankCommands.register();
