@@ -15,18 +15,22 @@ import static net.minecraft.server.command.CommandManager.literal;
 
 public final class RecipeCommandMaker {
 
-    private static final SuggestionProvider<ServerCommandSource> RECIPE_SUGGESTIONS =
-            (context, builder) -> {
-                RecipesHandler.mapToIdentifiers().stream()
-                        .map(Identifier::toString)
-                        .filter(id -> id.startsWith(builder.getRemaining()))
-                        .forEach(builder::suggest);
+    private static SuggestionProvider<ServerCommandSource> RECIPE_SUGGESTIONS;
+    private static void mkRecipeSuggestions() {
+        RECIPE_SUGGESTIONS =
+                (context, builder) -> {
+                    RecipesHandler.mapToIdentifiers().stream()
+                            .map(Identifier::toString)
+                            .filter(id -> id.startsWith(builder.getRemaining()))
+                            .forEach(builder::suggest);
 
-                return builder.buildFuture();
-            };
-
+                    return builder.buildFuture();
+                };
+    }
 
     public static void register() {
+        mkRecipeSuggestions();
+
         CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> {
 
             dispatcher.register(
