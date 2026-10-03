@@ -122,14 +122,16 @@ public final class TankCommands {
 
                                             if (!user.giveItemStack(giving)) user.dropItem(giving, true);
                                             amountStoredLeft = 0;
-                                            TankOperationHandler.decrementTank(tank, amountStoredLeft);
+                                            OperationResults result = TankOperationHandler.decrementTank(tank, amountStoredLeft);
+                                            if (result == OperationResults.EMPTIED) user.setStackInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
                                         } else {
 
                                             giving.setCount(maxStackSize);
 
                                             if (!user.giveItemStack(giving)) user.dropItem(giving, true);
                                             amountStoredLeft -= maxStackSize;
-                                            TankOperationHandler.decrementTank(tank, maxStackSize);
+                                            OperationResults result = TankOperationHandler.decrementTank(tank, maxStackSize);
+                                            if (result == OperationResults.EMPTIED) user.setStackInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
 
                                         }
                                     }
@@ -162,7 +164,8 @@ public final class TankCommands {
                                         if (!user.giveItemStack(giving)) user.dropItem(giving, true);
                                         amountToWithdraw -= maxStackSize;
 
-                                        TankOperationHandler.decrementTank(tank, maxStackSize);
+                                        OperationResults result = TankOperationHandler.decrementTank(tank, maxStackSize);
+                                        if (result == OperationResults.EMPTIED) user.setStackInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
                                     }
 
                                     if (TankOperationHandler.getAmountStored(tank) <= 0) user.setStackInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
