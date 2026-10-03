@@ -53,11 +53,22 @@ public final class CraftHandler {
 
     public static void craftItem(@NonNull Recipe recipe, ServerPlayerEntity crafter) {
         for (Recipe.IngredientMatcher ingredient : recipe.ingredients()) {
-            if (checkFoundAndConsume(ingredient, crafter.getStackInHand(Hand.MAIN_HAND))) continue;
-            if (checkFoundAndConsume(ingredient, crafter.getStackInHand(Hand.OFF_HAND))) continue;
 
-            for (int i = 0; i < crafter.getInventory().size(); i++)
-                if (checkFoundAndConsume(ingredient, crafter.getInventory().getStack(i))) break;
+            int mainHandFound = checkFoundAndConsume(ingredient, crafter.getStackInHand(Hand.MAIN_HAND), 0,
+                    () -> crafter.setStackInHand(Hand.MAIN_HAND, ItemStack.EMPTY));
+            if (mainHandFound >= ingredient.count()) continue;
+
+            int offHandFound = checkFoundAndConsume(ingredient, crafter.getStackInHand(Hand.OFF_HAND), mainHandFound,
+                    () -> crafter.setStackInHand(Hand.OFF_HAND, ItemStack.EMPTY));
+            if (offHandFound >= ingredient.count()) continue;
+            int totalFound = offHandFound;
+
+            for (int i = 0; i < crafter.getInventory().size(); i++) {
+                final int fi = i;
+                totalFound = checkFoundAndConsume(ingredient, crafter.getInventory().getStack(i), totalFound,
+                        () -> crafter.getInventory().removeStack(fi));
+                if (totalFound >= ingredient.count()) break;
+            }
         }
 
         ItemStack result = recipe.result().getIsByStack() ? recipe.result().getAsStack() :
@@ -66,8 +77,25 @@ public final class CraftHandler {
         if (!crafter.giveItemStack(result)) crafter.dropItem(result, true);
     }
 
-    public static boolean checkFoundAndConsume(Recipe.IngredientMatcher ingredient, ItemStack candidate) {
-        return false; // todo
+    public static int checkFoundAndConsume(Recipe.@NonNull IngredientMatcher ingredient, ItemStack candidate, int amountFound, Runnable emptyStack) {
+        int toFind = ingredient.count() - amountFound;
+
+        if (!TankHandler.isTank(candidate)) { // non-tank behavior
+            if (!ingredient.matches(candidate)) return amountFound;
+
+            // found all - to find left = 0
+            if (candidate.getCount() > toFind) {
+                candidate.setCount(candidate.getCount() - toFind);
+                return amountFound + toFind;
+            }
+
+            toFind -= candidate.getCount();
+            emptyStack.run();
+            return ingredient.count() - toFind;
+        }
+        // TANK BEHAVIOR
+
+        return amountFound; // todo
     }
 
     @Contract(pure = true)
