@@ -12,13 +12,18 @@ import net.minheur.betterosc.crafts.RecipeCommandMaker;
 import net.minheur.betterosc.recipes.RecipesHandler;
 import net.minheur.betterosc.tank.TankCommands;
 import net.minheur.betterosc.tank.TankHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 
 public final class Betterosc implements ModInitializer {
 
+    public static final String MODID = "betterosc";
+    public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
+
     public static final Path resourceRoot = FabricLoader.getInstance()
-            .getModContainer("betterosc").orElseThrow().findPath("").orElseThrow();
+            .getModContainer(MODID).orElseThrow().findPath("").orElseThrow();
 
     @Override
     public void onInitialize() {

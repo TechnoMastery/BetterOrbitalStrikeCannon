@@ -10,6 +10,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minheur.betterosc.Betterosc;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
 
@@ -21,7 +22,12 @@ public final class TankHandler {
     private static final String TYPE_KEY = "oc_type";
     private static final String UUID_KEY = "tank_uuid";
 
-    public static TankDataSaver tankState;
+    private static TankDataSaver tankState;
+
+    public static TankDataSaver getTankState() {
+        if (tankState == null) Betterosc.LOGGER.warn("accessing 'null' tankState");
+        return tankState;
+    }
 
     public static void loadTanks(@NonNull MinecraftServer server) {
         tankState = TankDataSaver.get(server.getOverworld());
@@ -49,7 +55,7 @@ public final class TankHandler {
 
         UUID tankUuid = UUID.randomUUID();
         ItemStack storedStack = content.copyWithCount(1);
-        tankState.setTank(tankUuid, new TankContent(storedStack, content.getCount()));
+        getTankState().setTank(tankUuid, new TankContent(storedStack, content.getCount()));
 
         return buildTankFromUUID(tankUuid);
     }
@@ -73,7 +79,7 @@ public final class TankHandler {
 
         UUID tankUUID = getTankUUID(tank);
 
-        TankContent content = tankState.getTanks().get(tankUUID);
+        TankContent content = getTankState().getTanks().get(tankUUID);
         Item stored = content.item().getItem();
         long amount = content.amount();
 
