@@ -71,6 +71,7 @@ public final class TankOperationHandler {
                 actualContent.amount() - amount
         );
         TankHandler.getTanks().put(uuid, newContent);
+        TankHandler.updateTankDisplay(tank);
 
         return OperationResults.SUCCESS;
     }
