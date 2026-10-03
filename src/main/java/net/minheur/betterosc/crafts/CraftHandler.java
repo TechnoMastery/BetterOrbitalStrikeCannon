@@ -12,6 +12,7 @@ import net.minecraft.util.Identifier;
 import net.minheur.betterosc.ExecutorHandler;
 import net.minheur.betterosc.recipes.Recipe;
 import net.minheur.betterosc.recipes.RecipesHandler;
+import net.minheur.betterosc.tank.OperationResults;
 import net.minheur.betterosc.tank.TankHandler;
 import net.minheur.betterosc.tank.TankOperationHandler;
 import org.jetbrains.annotations.Contract;
@@ -94,8 +95,22 @@ public final class CraftHandler {
             return ingredient.count() - toFind;
         }
         // TANK BEHAVIOR
+        ItemStack tankContent = TankOperationHandler.getTankContent(candidate);
+        if (!ingredient.matches(tankContent)) return amountFound;
 
-        return amountFound; // todo
+        long stored = TankOperationHandler.getAmountStored(candidate);
+        int amountToFind = ingredient.count() - amountFound;
+
+        if (stored > amountToFind) {
+            TankOperationHandler.decrementTank(candidate, amountToFind);
+            return amountFound + amountToFind;
+        }
+
+        int found = amountFound + (int) stored;
+        TankOperationHandler.decrementTank(candidate, stored);
+        emptyStack.run();
+
+        return found;
     }
 
     @Contract(pure = true)
