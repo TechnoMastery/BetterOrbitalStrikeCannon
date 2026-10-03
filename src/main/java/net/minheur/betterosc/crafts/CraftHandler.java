@@ -12,7 +12,6 @@ import net.minecraft.util.Identifier;
 import net.minheur.betterosc.ExecutorHandler;
 import net.minheur.betterosc.recipes.Recipe;
 import net.minheur.betterosc.recipes.RecipesHandler;
-import net.minheur.betterosc.tank.OperationResults;
 import net.minheur.betterosc.tank.TankHandler;
 import net.minheur.betterosc.tank.TankOperationHandler;
 import org.jetbrains.annotations.Contract;
