@@ -1,6 +1,7 @@
 package net.minheur.betterosc.tank;
 
 import net.minecraft.item.ItemStack;
+import org.jspecify.annotations.NonNull;
 
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -95,7 +96,7 @@ public final class TankOperationHandler {
         return content.amount();
     }
 
-    public static boolean getIsSameItem(ItemStack ref, ItemStack target) {
+    public static boolean getIsSameItem(@NonNull ItemStack ref, ItemStack target) {
         if (ref.isEmpty() || target.isEmpty()) return false;
         if (ref.getMaxCount() != target.getMaxCount()) return false;
 

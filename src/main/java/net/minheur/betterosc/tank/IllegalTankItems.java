@@ -6,10 +6,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registries;
 import net.minheur.betterosc.ConfigHandler;
+import org.jspecify.annotations.NonNull;
 
 public final class IllegalTankItems {
 
-    public static boolean isItemAllowed(ItemStack stack) {
+    public static boolean isItemAllowed(@NonNull ItemStack stack) {
         if (stack.isEmpty()) return false;
         if (TankHandler.isTank(stack)) return false;
         String id = Registries.ITEM.getId(stack.getItem()).toString();

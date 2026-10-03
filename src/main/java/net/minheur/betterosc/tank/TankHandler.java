@@ -30,7 +30,7 @@ public final class TankHandler {
         tankState = null;
     }
 
-    public static boolean isTank(ItemStack stack) {
+    public static boolean isTank(@NonNull ItemStack stack) {
         if (!stack.isOf(Items.NETHER_STAR)) return false;
 
         NbtComponent customData = stack.get(DataComponentTypes.CUSTOM_DATA);
@@ -43,7 +43,7 @@ public final class TankHandler {
                 .orElse(false);
     }
 
-    public static @Nullable ItemStack createTank(ItemStack content) {
+    public static @Nullable ItemStack createTank(@NonNull ItemStack content) {
         if (content.isEmpty()) return null;
         if (!IllegalTankItems.isItemAllowed(content)) return null;
 
@@ -54,7 +54,7 @@ public final class TankHandler {
         return buildTankFromUUID(tankUuid);
     }
 
-    public static ItemStack buildTankFromUUID(UUID uuid) {
+    public static @NonNull ItemStack buildTankFromUUID(@NonNull UUID uuid) {
         ItemStack tank = new ItemStack(Items.NETHER_STAR);
         NbtCompound nbt = new NbtCompound();
 
@@ -86,7 +86,7 @@ public final class TankHandler {
         )));
     }
 
-    public static UUID getTankUUID(ItemStack tank) {
+    public static @NonNull UUID getTankUUID(ItemStack tank) {
         NbtCompound nbt = getTankNbt(tank);
 
         String tankUUID = nbt.getString(UUID_KEY).orElse(null);
@@ -94,7 +94,7 @@ public final class TankHandler {
 
         return UUID.fromString(tankUUID);
     }
-    public static NbtCompound getTankNbt(ItemStack tank) {
+    public static @NonNull NbtCompound getTankNbt(ItemStack tank) {
         if (!isTank(tank)) throw new IllegalArgumentException("Can't update non-tank's UI!");
 
         NbtComponent nbtComponent = tank.get(DataComponentTypes.CUSTOM_DATA);
