@@ -37,16 +37,24 @@ public record Recipe(String recipeId, ResultContainer result, List<IngredientMat
         List<ItemStack> remaining = new ArrayList<>(availableStacks);
 
         for (IngredientMatcher ingredient : ingredients) {
-            boolean found = false;
+            int amountToFind = ingredient.count;
             for (int i = 0; i < remaining.size(); i++) {
                 ItemStack candidate = remaining.get(i);
                 if (ingredient.matches(candidate)) {
-                    found = true;
+
+                    if (candidate.getCount() > amountToFind) {
+                        candidate.setCount(candidate.getCount() - amountToFind);
+                        amountToFind = 0;
+                        break;
+                    }
+
+                    amountToFind -= candidate.getCount();
                     remaining.remove(i);
-                    break;
+                    if (amountToFind <= 0) break;
+                    else i--;
                 }
             }
-            if (!found) return false;
+            if (amountToFind > 0) return false;
         }
 
         return true;
@@ -124,7 +132,6 @@ public record Recipe(String recipeId, ResultContainer result, List<IngredientMat
         public boolean matches(ItemStack candidate) {
             if (candidate == null || candidate.isEmpty()) return false;
             if (!candidate.isOf(itemStack.getItem())) return false;
-            if (candidate.getCount() < count) return false;
 
             return rules.matches(candidate);
         }
