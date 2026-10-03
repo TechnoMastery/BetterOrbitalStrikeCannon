@@ -121,7 +121,10 @@ public final class CraftHandler {
 
         for (int i = 0; i < crafter.getInventory().size(); i++) {
             ItemStack stack = crafter.getInventory().getStack(i).copy();
-            if (!TankHandler.isTank(stack)) returnValue.add(stack); // normal behavior
+            if (!TankHandler.isTank(stack)) { // normal behavior
+                returnValue.add(stack);
+                continue;
+            }
             // TANK BEHAVIOR
             long amount = TankOperationHandler.getAmountStored(stack);
             ItemStack tankContent = TankOperationHandler.getTankContent(stack);
