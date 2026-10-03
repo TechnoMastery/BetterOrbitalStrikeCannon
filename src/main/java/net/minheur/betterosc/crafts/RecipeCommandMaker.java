@@ -62,7 +62,7 @@ public final class RecipeCommandMaker {
     }
     private static CommandNode<ServerCommandSource> getSeeNode(@NonNull CommandDispatcher<ServerCommandSource> dispatcher) {
         return dispatcher.getRoot()
-                .getChild("commandCraft")
+                .getChild("commandCrafter")
                 .getChild("see");
     }
 
