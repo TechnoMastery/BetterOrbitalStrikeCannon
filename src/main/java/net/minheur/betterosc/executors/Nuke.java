@@ -2,21 +2,15 @@ package net.minheur.betterosc.executors;
 
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.TntEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 import net.minheur.betterosc.Betterosc;
@@ -63,28 +57,10 @@ public final class Nuke {
 
             ServerWorld world = player.getEntityWorld();
 
-            int x, z;
-            ServerWorld targetWorld;
-
-            if (nbt.getInt("x").isPresent()) {
-                x = nbt.getInt("x").orElseThrow();
-                z = nbt.getInt("z").orElseThrow();
-
-                String targetWorldKeyString = nbt.getString("dim", null);
-                RegistryKey<World> key = RegistryKey.of(
-                        RegistryKeys.WORLD,
-                        Identifier.of(targetWorldKeyString)
-                );
-                targetWorld = world.getServer().getWorld(key);
-            } else {
-                HitResult hitResult = player.raycast(500.0f, 0.0f, false);
-                if (hitResult.getType() != HitResult.Type.BLOCK) return ActionResult.PASS;
-                BlockPos hitBlock = ((BlockHitResult) hitResult).getBlockPos();
-
-                x = hitBlock.getX();
-                z = hitBlock.getZ();
-                targetWorld = world;
-            }
+            ResultXZDim resultXZDim = getXZDim(nbt, world, player);
+            if (resultXZDim.returnsPass()) return ActionResult.PASS;
+            int x = resultXZDim.x(), z = resultXZDim.z();
+            ServerWorld targetWorld = resultXZDim.targetWorld();
 
             Integer ringAmount = nbt.getInt("ring_amount").orElse(null);
             if (ringAmount == null) return ActionResult.PASS;

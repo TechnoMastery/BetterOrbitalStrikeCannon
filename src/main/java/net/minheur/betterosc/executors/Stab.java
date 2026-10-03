@@ -1,6 +1,5 @@
 package net.minheur.betterosc.executors;
 
-import net.minecraft.block.BlockState;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.TntEntity;
@@ -29,8 +28,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
-import static net.minheur.betterosc.executors.ExecutorsHelpers.checkPositionedArgumentsNullStates;
-import static net.minheur.betterosc.executors.ExecutorsHelpers.mkDefaultRod;
+import static net.minheur.betterosc.executors.ExecutorsHelpers.*;
 
 public final class Stab {
     public static final String TYPE_FIXED = "stab_fixed";
@@ -102,17 +100,7 @@ public final class Stab {
     }
 
     public static void spawn(@NonNull World world, int centerX, int centerZ) {
-        Integer minY = null;
-        for (int y = world.getHeight() -1; y >= world.getBottomY(); y--) {
-            BlockPos pos = new BlockPos(centerX, y, centerZ);
-            BlockState state = world.getBlockState(pos);
-
-            if (state.getBlock().getBlastResistance() >= 1200.0f) {
-                minY = y +1;
-                break;
-            }
-        }
-        if (minY == null) minY = world.getBottomY();
+        int minY = getHighestNonExplosive(world, centerX, centerZ);
         int maxY = world.getHeight() -1;
 
         // SPAWN
