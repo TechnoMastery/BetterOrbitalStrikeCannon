@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Hand;
 import net.minheur.betterosc.crafts.DefaultRecipesHandler;
+import net.minheur.betterosc.crafts.RecipeCommandMaker;
 import net.minheur.betterosc.recipes.RecipesHandler;
 import net.minheur.betterosc.tank.TankCommands;
 import net.minheur.betterosc.tank.TankHandler;
@@ -38,6 +39,7 @@ public final class Betterosc implements ModInitializer {
 
         CommandRegister.register();
         TankCommands.register();
+        RecipeCommandMaker.register();
     }
 
     public static void breakOrbitalCallItem(ServerPlayerEntity player, Hand hand, ItemStack stack) {
