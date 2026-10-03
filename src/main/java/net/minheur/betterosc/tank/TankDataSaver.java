@@ -25,7 +25,7 @@ public final class TankDataSaver extends PersistentState {
         this(new ConcurrentHashMap<>());
     }
     public TankDataSaver(Map<UUID, TankContent> tanks) {
-        this.tanks = tanks;
+        this.tanks = new ConcurrentHashMap<>(tanks);
     }
 
     public static final Codec<TankDataSaver> CODEC = RecordCodecBuilder.create(instance -> instance.group(
