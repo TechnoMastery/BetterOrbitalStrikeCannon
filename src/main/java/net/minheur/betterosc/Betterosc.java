@@ -22,15 +22,12 @@ public final class Betterosc implements ModInitializer {
     public static final String MODID = "betterosc";
     public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
 
-    public static final Path resourceRoot = FabricLoader.getInstance()
-            .getModContainer(MODID).orElseThrow().findPath("").orElseThrow();
-
     @Override
     public void onInitialize() {
         ConfigHandler.load();
         UsedItemsHandler.load();
-        RecipesHandler.loadRecipes();
         DefaultRecipesHandler.checkAndCreate();
+        RecipesHandler.loadRecipes();
 
         ExecutorHandler.registerUsage();
 

@@ -1,0 +1,21 @@
+{
+  "id": "betterosc:fixed_stab",
+  "result": {
+    "id": "betterosc:stab_fixed",
+    "extra": {}
+  },
+  "ingredients": [
+    {
+      "id": "minecraft:tnt",
+      "count": 500
+    },
+    {
+      "id": "minecraft:fishing_rod",
+      "match": {
+        "forbidden": [
+          "components.minecraft:custom_data.oc_type"
+        ]
+      }
+    }
+  ]
+}
