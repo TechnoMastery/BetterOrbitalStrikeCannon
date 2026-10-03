@@ -118,12 +118,16 @@ public final class TankCommands {
                                         ItemStack giving = contentRef.copy();
 
                                         if (amountStoredLeft <= maxStackSize) {
-                                            giving.setCount((int) amountStoredLeft);
+                                            long withdrawn = amountStoredLeft;
+                                            giving.setCount((int) withdrawn);
 
                                             if (!user.giveItemStack(giving)) user.dropItem(giving, true);
                                             amountStoredLeft = 0;
-                                            OperationResults result = TankOperationHandler.decrementTank(tank, amountStoredLeft);
-                                            if (result == OperationResults.EMPTIED) user.setStackInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
+                                            OperationResults result = TankOperationHandler.decrementTank(tank, withdrawn);
+                                            if (result == OperationResults.EMPTIED) {
+                                                user.setStackInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
+                                                break;
+                                            }
                                         } else {
 
                                             giving.setCount(maxStackSize);
@@ -159,16 +163,21 @@ public final class TankCommands {
 
                                     while (amountToWithdraw > 0) {
                                         ItemStack giving = contentRef.copy();
-                                        giving.setCount(amountToWithdraw <= maxStackSize ? (int) amountToWithdraw : maxStackSize);
+                                        long withdrawn = Math.min(amountToWithdraw, maxStackSize);
+                                        giving.setCount((int) withdrawn);
 
                                         if (!user.giveItemStack(giving)) user.dropItem(giving, true);
-                                        amountToWithdraw -= maxStackSize;
+                                        amountToWithdraw -= withdrawn;
 
-                                        OperationResults result = TankOperationHandler.decrementTank(tank, maxStackSize);
-                                        if (result == OperationResults.EMPTIED) user.setStackInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
+                                        OperationResults result = TankOperationHandler.decrementTank(tank, withdrawn);
+                                        if (result == OperationResults.EMPTIED) {
+                                            user.setStackInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
+                                            return 1;
+                                        }
                                     }
 
-                                    if (TankOperationHandler.getAmountStored(tank) <= 0) user.setStackInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
+                                    if (TankHandler.isTank(tank) && TankOperationHandler.getAmountStored(tank) <= 0)
+                                        user.setStackInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
                                     return 1;
                                 }))
                         )
