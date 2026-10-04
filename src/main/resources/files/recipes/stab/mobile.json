@@ -1,0 +1,26 @@
+{
+  "id": "betterosc:mobile_stab",
+  "result": {
+    "id": "betterosc:stab_mobile",
+    "extra": {}
+  },
+  "ingredients": [
+    {
+      "id": "minecraft:tnt",
+      "count": 1000
+    },
+    {
+      "id": "minecraft:fishing_rod",
+      "count": 5,
+      "match": {
+        "forbidden": [
+          "components.minecraft:custom_data.oc_type"
+        ]
+      }
+    },
+    {
+      "id": "minecraft:ender_pearl",
+      "count": 10
+    }
+  ]
+}

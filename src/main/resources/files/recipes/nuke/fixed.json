@@ -1,0 +1,23 @@
+{
+  "id": "betterosc:fixed_nuke",
+  "result": {
+    "id": "betterosc:nuke_fixed",
+    "extra": {
+      "ringAmount": 10
+    }
+  },
+  "ingredients": [
+    {
+      "id": "minecraft:tnt",
+      "count": 1000
+    },
+    {
+      "id": "minecraft:fishing_rod",
+      "match": {
+        "forbidden": [
+          "components.minecraft:custom_data.oc_type"
+        ]
+      }
+    }
+  ]
+}

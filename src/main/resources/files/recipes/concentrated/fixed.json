@@ -1,0 +1,21 @@
+{
+  "id": "betterosc:fixed_concentrated",
+  "result": {
+    "id": "betterosc:concentrated_fixed",
+    "extra": {}
+  },
+  "ingredients": [
+    {
+      "id": "minecraft:tnt",
+      "count": 2500
+    },
+    {
+      "id": "minecraft:fishing_rod",
+      "match": {
+        "forbidden": [
+          "components.minecraft:custom_data.oc_type"
+        ]
+      }
+    }
+  ]
+}

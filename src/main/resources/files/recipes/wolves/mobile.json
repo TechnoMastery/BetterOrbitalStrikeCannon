@@ -1,0 +1,95 @@
+{
+  "id": "betterosc:mobile_wolves",
+  "result": {
+    "id": "betterosc:wolf_mobile",
+    "extra": {
+      "pigAmount": 5000
+    }
+  },
+  "ingredients": [
+    {
+      "id": "minecraft:fishing_rod",
+      "match": {
+        "forbidden": [
+          "components.minecraft:custom_data.oc_type"
+        ]
+      }
+    },
+    {
+      "id": "minecraft:bone",
+      "count": 100
+    },
+    {
+      "id": "minecraft:rotten_flesh",
+      "count": 150
+    },
+    {
+      "id": "minecraft:wolf_armor",
+      "count": 25
+    },
+    {
+      "id": "minecraft:ender_pearl",
+      "count": 5
+    },
+    {
+      "id": "minecraft:splash_potion",
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "minecraft:fire_resistance"
+        }
+      },
+      "match": {
+        "required": {
+          "components.minecraft:potion_contents": {
+            "potion": "minecraft:fire_resistance"
+          }
+        }
+      }
+    },
+    {
+      "id": "minecraft:splash_potion",
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "minecraft:strong_strength"
+        }
+      },
+      "match": {
+        "required": {
+          "components.minecraft:potion_contents": {
+            "potion": "minecraft:strong_strength"
+          }
+        }
+      }
+    },
+    {
+      "id": "minecraft:splash_potion",
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "minecraft:strong_swiftness"
+        }
+      },
+      "match": {
+        "required": {
+          "components.minecraft:potion_contents": {
+            "potion": "minecraft:strong_swiftness"
+          }
+        }
+      }
+    },
+    {
+      "id": "minecraft:splash_potion",
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "minecraft:harming"
+        }
+      },
+      "match": {
+        "required": {
+          "components.minecraft:potion_contents": {
+            "potion": "minecraft:harming"
+          }
+        }
+      }
+    }
+  ]
+}

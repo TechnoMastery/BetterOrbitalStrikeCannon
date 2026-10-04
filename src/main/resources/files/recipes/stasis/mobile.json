@@ -1,0 +1,21 @@
+{
+  "id": "betterosc:mobile_stasis",
+  "result": {
+    "id": "betterosc:stasis_fixed",
+    "extra": {}
+  },
+  "ingredients": [
+    {
+      "id": "minecraft:fishing_rod",
+      "match": {
+        "forbidden": [
+          "components.minecraft:custom_data.oc_type"
+        ]
+      }
+    },
+    {
+      "id": "minecraft:ender_pearl",
+      "count": 50
+    }
+  ]
+}

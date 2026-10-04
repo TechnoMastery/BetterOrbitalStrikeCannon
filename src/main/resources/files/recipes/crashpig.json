@@ -1,0 +1,31 @@
+{
+  "id": "betterosc:crashpig",
+  "result": {
+    "id": "betterosc:crash_pig",
+    "extra": {
+      "pigAmount": 5000
+    }
+  },
+  "ingredients": [
+    {
+      "id": "minecraft:fishing_rod",
+      "match": {
+        "forbidden": [
+          "components.minecraft:custom_data.oc_type"
+        ]
+      }
+    },
+    {
+      "id": "minecraft:porkchop",
+      "count": 3000
+    },
+    {
+      "id": "minecraft:cooked_porkchop",
+      "count": 1000
+    },
+    {
+      "id": "minecraft:saddle",
+      "count": 5
+    }
+  ]
+}

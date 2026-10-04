@@ -1,0 +1,25 @@
+{
+  "id": "betterosc:fixed_totem_stasis",
+  "result": {
+    "id": "betterosc:totem_fixed",
+    "extra": {}
+  },
+  "ingredients": [
+    {
+      "id": "minecraft:fishing_rod",
+      "match": {
+        "forbidden": [
+          "components.minecraft:custom_data.oc_type"
+        ]
+      }
+    },
+    {
+      "id": "minecraft:ender_pearl",
+      "count": 25
+    },
+    {
+      "id": "minecraft:totem_of_undying",
+      "count": 10
+    }
+  ]
+}

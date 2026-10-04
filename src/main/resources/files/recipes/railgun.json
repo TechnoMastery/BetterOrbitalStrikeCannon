@@ -1,0 +1,26 @@
+{
+  "id": "betterosc:railgun",
+  "result": {
+    "id": "betterosc:railgun_straight",
+    "extra": {}
+  },
+  "ingredients": [
+    {
+      "id": "minecraft:crossbow",
+      "count": 5,
+      "match": {
+        "forbidden": [
+          "components.minecraft:custom_data.oc_type"
+        ]
+      }
+    },
+    {
+      "id": "minecraft:tnt_minecart",
+      "count": 100
+    },
+    {
+      "id": "minecraft:arrow",
+      "count": 5000
+    }
+  ]
+}

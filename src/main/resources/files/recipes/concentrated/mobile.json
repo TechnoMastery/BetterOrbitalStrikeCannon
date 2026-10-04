@@ -1,0 +1,25 @@
+{
+  "id": "betterosc:mobile_concentrated",
+  "result": {
+    "id": "betterosc:concentrated_mobile",
+    "extra": {}
+  },
+  "ingredients": [
+    {
+      "id": "minecraft:tnt",
+      "count": 5000
+    },
+    {
+      "id": "minecraft:fishing_rod",
+      "match": {
+        "forbidden": [
+          "components.minecraft:custom_data.oc_type"
+        ]
+      }
+    },
+    {
+      "id": "minecraft:ender_pearl",
+      "count": 30
+    }
+  ]
+}

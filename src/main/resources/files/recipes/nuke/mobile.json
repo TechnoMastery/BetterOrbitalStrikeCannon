@@ -1,0 +1,27 @@
+{
+  "id": "betterosc:mobile_nuke",
+  "result": {
+    "id": "betterosc:nuke_mobile",
+    "extra": {
+      "ringAmount": 10
+    }
+  },
+  "ingredients": [
+    {
+      "id": "minecraft:tnt",
+      "count": 1500
+    },
+    {
+      "id": "minecraft:fishing_rod",
+      "match": {
+        "forbidden": [
+          "components.minecraft:custom_data.oc_type"
+        ]
+      }
+    },
+    {
+      "id": "minecraft:ender_pearl",
+      "count": 15
+    }
+  ]
+}

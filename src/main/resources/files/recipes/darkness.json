@@ -1,0 +1,21 @@
+{
+  "id": "betterosc:darkness",
+  "result": {
+    "id": "betterosc:darkness",
+    "extra": {}
+  },
+  "ingredients": [
+    {
+      "id": "minecraft:fishing_rod",
+      "match": {
+        "forbidden": [
+          "components.minecraft:custom_data.oc_type"
+        ]
+      }
+    },
+    {
+      "id": "minecraft:sculk",
+      "count": 20
+    }
+  ]
+}
