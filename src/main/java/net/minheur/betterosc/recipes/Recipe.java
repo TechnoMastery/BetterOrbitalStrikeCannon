@@ -166,7 +166,7 @@ public record Recipe(String recipeId, ResultContainer result, List<IngredientMat
 
             for (Map.Entry<String, JsonElement> entry : required.entrySet()) {
                 if (shouldIgnore(entry.getKey())) continue;
-                if (!jsonContains(serialized, entry.getValue())) return false;
+                if (!jsonContainsPath(serialized, entry.getKey(), entry.getValue())) return false;
             }
 
             for (Map.Entry<String, JsonElement> entry : forbidden.entrySet()) {
@@ -305,5 +305,14 @@ public record Recipe(String recipeId, ResultContainer result, List<IngredientMat
             current = current.getAsJsonObject().get(key);
         }
         return true;
+    }
+
+    private static boolean jsonContainsPath(JsonElement root, @NonNull String path, JsonElement expected) {
+        JsonElement current = root;
+        for (String key : path.split("\\.")) {
+            if (!current.isJsonObject() || !current.getAsJsonObject().has(key)) return false;
+            current = current.getAsJsonObject().get(key);
+        }
+        return jsonContains(current, expected);
     }
 }
