@@ -63,7 +63,47 @@ public final class TankCommands {
                                 TankOperationHandler.safeIncrement(tank, offHand, (stack) -> user.setStackInHand(Hand.OFF_HAND, stack));
 
                                 return 1;
-                            }))
+                            }).then(argument("maxAmount", IntegerArgumentType.integer()).executes(source -> {
+                                if (!(source.getSource().getEntity() instanceof ServerPlayerEntity user)) return 0;
+                                ItemStack mainHand = user.getMainHandStack();
+
+                                if (!IllegalTankItems.isItemAllowed(mainHand)) {
+                                    source.getSource().sendError(Text.literal("Can't store this item in a tank!"));
+                                    source.getSource().sendError(Text.literal("Try holding a correct item in your main hand!"));
+                                    return 0;
+                                }
+
+                                int maxAmount = IntegerArgumentType.getInteger(source, "maxAmount");
+                                if (maxAmount <= 0) {
+                                    source.getSource().sendError(Text.literal("Can't store maximum amount of 0!"));
+                                    return 0;
+                                }
+
+                                maxAmount -= mainHand.getCount();
+
+                                ItemStack tank = TankHandler.createTank(mainHand);
+                                if (tank == null) {
+                                    source.getSource().sendError(Text.literal("Couldn't create tank!"));
+                                    return 0;
+                                }
+
+                                user.setStackInHand(Hand.MAIN_HAND, tank);
+
+                                if (maxAmount > 0) for (int i = 0; i < user.getInventory().size(); i++) {
+                                    ItemStack target = user.getInventory().getStack(i);
+                                    final int amountStored = target.getCount();
+                                    maxAmount -= amountStored;
+                                    if (maxAmount < 0) break;
+                                    final int index = i;
+                                    if (!TankOperationHandler.safeIncrement(tank, target, (stack -> user.getInventory().setStack(index, stack))))
+                                        break;
+                                }
+
+                                ItemStack offHand = user.getOffHandStack();
+                                TankOperationHandler.safeIncrement(tank, offHand, (stack) -> user.setStackInHand(Hand.OFF_HAND, stack));
+
+                                return 1;
+                            })))
 
                             .then(literal("add").then(literal("all").executes(source -> {
                                         if (!(source.getSource().getEntity() instanceof ServerPlayerEntity user)) return 0;
