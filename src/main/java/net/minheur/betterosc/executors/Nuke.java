@@ -102,7 +102,7 @@ public final class Nuke {
         int centerY = world.getTopY(Heightmap.Type.WORLD_SURFACE, centerX, centerZ) +71; // get top block & tempo
 
         // GET CENTER TNT
-        TntEntity center = new TntEntity(world, (double) centerX +.5, centerY, (double) centerZ +.5, null);
+        TntEntity center = new TntEntity(world, centerX, centerY, centerZ, null);
         center.setFuse(fuse);
         center.setVelocity(0.0f, gravity, 0.0f);
         world.spawnEntity(center); // SPAWN

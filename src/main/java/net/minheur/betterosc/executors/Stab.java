@@ -108,7 +108,7 @@ public final class Stab {
             BlockPos pos = new BlockPos(centerX, y, centerZ);
             int amount = world.getBlockState(pos).isAir() ? 1 : 2;
             for(int i = 0; i < amount; ++i) {
-                TntEntity tnt = new TntEntity(world, (double)centerX + (double)0.5F, y, (double)centerZ + (double)0.5F, null);
+                TntEntity tnt = new TntEntity(world, centerX, y, centerZ, null);
                 tnt.setFuse(0);
                 world.spawnEntity(tnt);
             }

@@ -87,7 +87,7 @@ public class ConcentratedShot {
 
     public static void spawn(@NonNull World world, int x, int y, int z, int amount) {
         for (int i = 0; i < amount; i++) {
-            TntEntity tnt = new TntEntity(world, (double) x + (double)0.5F, y, (double) z + (double)0.5F, null);
+            TntEntity tnt = new TntEntity(world, x, y, z, null);
             tnt.setFuse(10);
             world.spawnEntity(tnt);
         }

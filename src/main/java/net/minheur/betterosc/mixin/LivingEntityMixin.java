@@ -85,8 +85,8 @@ public abstract class LivingEntityMixin {
 
         world.playSound(null, preX, preY, preZ, SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 1.0F, 1.0F);
         world.spawnParticles(ParticleTypes.PORTAL, preX, preY + (double) 1.0F, preZ, 50, 0.5F, 0.5F, 0.5F, 0.5F);
-        target.teleport(targetWorld, (double)x + (double)0.5F, y, (double)z + (double)0.5F, Set.of(), getHeadYaw(), 0.0f, true);
-        world.playSound(null, (double)x + (double)0.5F, y, (double)z + (double)0.5F, SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 1.0F, 1.0F);
-        world.spawnParticles(ParticleTypes.PORTAL, (double)x + (double)0.5F, y + 1, (double)z + (double)0.5F, 50, 0.5F, 0.5F, 0.5F, 0.5F);
+        target.teleport(targetWorld, (double)x, y, (double)z, Set.of(), getHeadYaw(), 0.0f, true);
+        world.playSound(null, (double)x, y, (double)z, SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 1.0F, 1.0F);
+        world.spawnParticles(ParticleTypes.PORTAL, (double)x, y + 1, (double)z, 50, 0.5F, 0.5F, 0.5F, 0.5F);
     }
 }

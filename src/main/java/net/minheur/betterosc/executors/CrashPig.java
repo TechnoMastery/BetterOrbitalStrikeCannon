@@ -95,7 +95,6 @@ public final class CrashPig {
 
     public static void spawn(@NonNull ServerWorld world, int x, int y, int z, int amount) {
 
-        // spawn wolves
         for (int i = 0; i < amount; i++) {
             PigEntity pig = new PigEntity(EntityType.PIG, world);
             pig.setPosition(x, y, z);
