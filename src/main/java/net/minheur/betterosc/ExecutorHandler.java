@@ -113,6 +113,11 @@ public final class ExecutorHandler {
                 if (amount == null) yield Wolves.createMobile();
                 yield Wolves.createMobile(amount.getAsInt());
             }
+            case Wolves.TYPE_FIXED ->  {
+                JsonElement amount = result.getExtra().get("amount");
+                if (amount == null) yield Wolves.createFixed(crafter.getUuid());
+                yield Wolves.createFixed(crafter.getUuid(), amount.getAsInt());
+            }
             default -> throw new IllegalStateException("Did not found custom item type for " + result.getId());
         };
     }
