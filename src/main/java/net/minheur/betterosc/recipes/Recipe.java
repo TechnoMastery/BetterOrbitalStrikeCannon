@@ -268,7 +268,7 @@ public record Recipe(String recipeId, ResultContainer result, List<IngredientMat
         }
     }
 
-    private static JsonElement encodeStack(ItemStack stack) {
+    private static @NonNull JsonElement encodeStack(ItemStack stack) {
         return ItemStack.CODEC.encodeStart(JsonOps.INSTANCE, stack).result().orElseThrow(() -> new IllegalArgumentException("Failed to serialize stack as JSON"));
     }
 
@@ -298,7 +298,7 @@ public record Recipe(String recipeId, ResultContainer result, List<IngredientMat
         return root.equals(expected);
     }
 
-    private static boolean jsonContainsPath(JsonElement root, String path) {
+    private static boolean jsonContainsPath(JsonElement root, @NonNull String path) {
         JsonElement current = root;
         for (String key : path.split("\\.")) {
             if (!current.isJsonObject() || !current.getAsJsonObject().has(key)) return false;
