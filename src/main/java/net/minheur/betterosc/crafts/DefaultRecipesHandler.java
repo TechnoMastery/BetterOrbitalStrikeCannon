@@ -12,6 +12,7 @@ public final class DefaultRecipesHandler {
     private static final Path RECIPE_FOLDER = FabricLoader.getInstance().getConfigDir().resolve("betterosc/recipes");
 
     public static final List<String> DEFAULT_RECIPES = List.of(
+            "README.md",
             "concentrated/fixed.json", "concentrated/mobile.json",
             "nuke/fixed.json", "nuke/mobile.json",
             "stab/fixed.json", "stab/mobile.json",
