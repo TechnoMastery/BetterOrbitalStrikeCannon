@@ -7,6 +7,7 @@ import net.minecraft.item.Items;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minheur.betterosc.ExecutorHandler;
@@ -61,12 +62,15 @@ public final class CraftHandler {
         List<Text> ingredientList = new ArrayList<>();
 
         for (Recipe.IngredientMatcher ingredient : recipe.ingredients()) ingredientList.add(Text.empty()
-                .append("-> ").append(ingredient.itemStack().toHoverableText()).append(" x")
-                .append(String.valueOf(ingredient.count())));
+                .append(Text.literal("-> ").formatted(Formatting.BLUE))
+                .append(ingredient.itemStack().toHoverableText())
+                .append(Text.literal(" x").formatted(Formatting.BOLD, Formatting.GOLD))
+                .append(Text.literal(String.valueOf(ingredient.count())).formatted(Formatting.BOLD, Formatting.GOLD)));
 
-        Text title = Text.empty().append("Crafting ").append(recipe.result().getIsByStack() ?
+        Text title = Text.empty().append(Text.literal("Crafting ").formatted(Formatting.BOLD, Formatting.GREEN))
+                .append(recipe.result().getIsByStack() ?
                 recipe.result().getAsStack().toHoverableText() :
-                Text.literal(recipe.result().getId()));
+                Text.literal(recipe.result().getId()).formatted(Formatting.YELLOW));
 
         source.getSource().sendMessage(title);
         ingredientList.forEach(source.getSource()::sendMessage);
