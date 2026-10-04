@@ -120,7 +120,9 @@ public record Recipe(String recipeId, ResultContainer result, List<IngredientMat
     public record IngredientMatcher(ItemStack itemStack, int count, MatchRules rules) {
 
         public IngredientMatcher(ItemStack itemStack, int count, MatchRules rules) {
-            this.itemStack = Objects.requireNonNull(itemStack, "itemStack");
+            Objects.requireNonNull(itemStack, "itemStack");
+            itemStack.setCount(1);
+            this.itemStack = itemStack;
             this.count = Math.max(1, count);
             this.rules = rules == null ? MatchRules.EMPTY : rules;
         }
