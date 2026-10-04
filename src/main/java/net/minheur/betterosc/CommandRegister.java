@@ -14,6 +14,7 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.minheur.betterosc.executors.*;
+import org.jspecify.annotations.NonNull;
 
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
@@ -890,7 +891,7 @@ public final class CommandRegister {
         });
     }
 
-    public static boolean isOpped(ServerCommandSource source) {
+    public static boolean isOpped(@NonNull ServerCommandSource source) {
         if (!(source.getEntity() instanceof ServerPlayerEntity player)) return false;
         return source.getServer().getPlayerManager().isOperator(player.getPlayerConfigEntry());
     }
