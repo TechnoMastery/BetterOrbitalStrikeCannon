@@ -47,7 +47,29 @@ public final class CraftHandler {
         return 1;
     }
 
-    public static int seeRecipe(CommandContext<ServerCommandSource> source) {
+    public static int seeRecipe(@NonNull CommandContext<ServerCommandSource> source) {
+        if (!(source.getSource().getEntity() instanceof ServerPlayerEntity)) return 1;
+
+        Identifier recipeId = IdentifierArgumentType.getIdentifier(source, "recipe");
+        Recipe recipe = RecipesHandler.getFromId(recipeId.toString());
+
+        if (recipe == null) {
+            source.getSource().sendError(Text.literal("Did not found this recipe!"));
+            return 0;
+        }
+
+        List<Text> ingredientList = new ArrayList<>();
+
+        for (Recipe.IngredientMatcher ingredient : recipe.ingredients()) ingredientList.add(Text.empty()
+                .append("-> ").append(ingredient.itemStack().toHoverableText()).append(" x")
+                .append(String.valueOf(ingredient.count())));
+
+        Text title = Text.empty().append("Crafting ").append(recipe.result().getIsByStack() ?
+                recipe.result().getAsStack().toHoverableText() :
+                Text.literal(recipe.result().getId()));
+
+        source.getSource().sendMessage(title);
+        ingredientList.forEach(source.getSource()::sendMessage);
         return 1;
     }
 
