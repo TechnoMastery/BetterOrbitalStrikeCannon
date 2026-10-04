@@ -80,7 +80,7 @@ public final class TankHandler {
         UUID tankUUID = getTankUUID(tank);
 
         TankContent content = getTankState().getTanks().get(tankUUID);
-        Item stored = content.item().getItem();
+        ItemStack stored = content.item();
         long amount = content.amount();
 
         tank.set(DataComponentTypes.CUSTOM_NAME, Text.empty()
