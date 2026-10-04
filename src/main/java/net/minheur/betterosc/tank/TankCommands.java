@@ -239,6 +239,21 @@ public final class TankCommands {
                                     }))
                             )
 
+                            .then(literal("details").executes(source -> {
+                                if (!(source.getSource().getEntity() instanceof ServerPlayerEntity user))
+                                    return 0;
+
+                                ItemStack tank = user.getMainHandStack();
+                                if (!TankHandler.isTank(tank)) {
+                                    source.getSource().sendError(Text.literal("Please hold a tank in your main hand!"));
+                                    return 0;
+                                }
+
+                                source.getSource().sendMessage(Text.literal("Stored item: ")
+                                        .append(TankOperationHandler.getTankContent(tank).toHoverableText()));
+                                return 1;
+                            }))
+
                             .then(literal("admin").requires(CommandRegister::isOpped)
                                     .then(literal("adminGiveTank").then(argument("uuid", UuidArgumentType.uuid())
                                             .suggests(TANKS_SUGGESTIONS.get()).executes(source -> {
