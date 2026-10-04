@@ -2,20 +2,32 @@ package net.minheur.betterosc.tank;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.LongArgumentType;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.command.argument.UuidArgumentType;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minheur.betterosc.CommandRegister;
 
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
 public final class TankCommands {
+
+    private static final Supplier<SuggestionProvider<ServerCommandSource>> TANKS_SUGGESTIONS = () ->
+            (context, builder) -> {
+        TankHandler.getTankState().getTanks().keySet().stream()
+                .map(UUID::toString)
+                .filter(id -> id.startsWith(builder.getRemaining()))
+                .forEach(builder::suggest);
+        return builder.buildFuture();
+    };
 
     public static void register() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
@@ -189,7 +201,7 @@ public final class TankCommands {
 
                             .then(literal("admin").requires(CommandRegister::isOpped)
                                     .then(literal("adminGiveTank").then(argument("uuid", UuidArgumentType.uuid())
-                                            .executes(source -> {
+                                            .suggests(TANKS_SUGGESTIONS.get()).executes(source -> {
                                                 if (!(source.getSource().getEntity() instanceof ServerPlayerEntity user))
                                                     return 0;
                                                 UUID targetTank = UuidArgumentType.getUuid(source, "uuid");
