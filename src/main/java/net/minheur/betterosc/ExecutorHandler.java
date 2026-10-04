@@ -27,12 +27,26 @@ public final class ExecutorHandler {
         if (crafter == null) throw new IllegalArgumentException("Can't have a null crafter player!");
 
         return switch (result.getId()) {
+            case ConcentratedShot.TYPE_FIXED -> {
+                int x = crafter.getBlockX();
+                int z = crafter.getBlockZ();
+                if (!result.getExtra().has("tntAmount"))
+                    yield ConcentratedShot.create(x, z, null, crafter.getEntityWorld().getRegistryKey());
+                int amount = result.getExtra().get("tntAmount").getAsInt();
+                yield ConcentratedShot.create(x, z, amount, crafter.getEntityWorld().getRegistryKey());
+            }
+            case ConcentratedShot.TYPE_MOBILE -> {
+                if (!result.getExtra().has("tntAmount")) yield ConcentratedShot.create(null);
+                int amount = result.getExtra().get("tntAmount").getAsInt();
+                yield ConcentratedShot.create(amount);
+            }
             case CrashPig.TYPE -> {
                 int x = crafter.getBlockX();
                 int y = crafter.getBlockY();
                 int z = crafter.getBlockZ();
 
-                if (!result.getExtra().has("pigAmount")) yield CrashPig.create(x, y, z, crafter.getEntityWorld().getRegistryKey());
+                if (!result.getExtra().has("pigAmount"))
+                    yield CrashPig.create(x, y, z, crafter.getEntityWorld().getRegistryKey());
 
                 int amount = result.getExtra().get("pigAmount").getAsInt();
                 yield CrashPig.create(x, y, z, crafter.getEntityWorld().getRegistryKey(), amount);
@@ -143,12 +157,14 @@ public final class ExecutorHandler {
             // ROD
             if (stack.getItem() == Items.FISHING_ROD)
                 return switch (type) {
+                    case ConcentratedShot.TYPE_FIXED, ConcentratedShot.TYPE_MOBILE ->
+                            ConcentratedShot.handle(serverPlayer, uuid, nbt, hand, stack);
                     case Nuke.TYPE_FIXED, Nuke.TYPE_MOBILE -> Nuke.handle(serverPlayer, uuid, nbt, hand, stack);
                     case Stab.TYPE_FIXED, Stab.TYPE_MOBILE -> Stab.handle(serverPlayer, uuid, nbt, hand, stack);
                     case TpStasis.TYPE_FIXED, TpStasis.TYPE_MOBILE ->
                             TpStasis.handle(serverPlayer, uuid, nbt, hand, stack);
-                    case Wolves.TYPE_MOBILE-> Wolves.handle(serverPlayer, uuid, nbt, hand, stack, true);
-                    case Wolves.TYPE_FIXED-> Wolves.handle(serverPlayer, uuid, nbt, hand, stack, false);
+                    case Wolves.TYPE_MOBILE -> Wolves.handle(serverPlayer, uuid, nbt, hand, stack, true);
+                    case Wolves.TYPE_FIXED -> Wolves.handle(serverPlayer, uuid, nbt, hand, stack, false);
                     case Darkness.TYPE -> Darkness.handle(serverPlayer, uuid, nbt, hand, stack);
                     case CrashPig.TYPE -> CrashPig.handle(serverPlayer, uuid, nbt, hand, stack);
                     default -> ActionResult.PASS;

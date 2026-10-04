@@ -724,7 +724,7 @@ public final class CommandRegister {
                                                         .executes(source -> {
                                                             if (!(source.getSource().getEntity() instanceof ServerPlayerEntity user)) return 0;
                                                             Vec3d target = Vec3ArgumentType.getVec3(source, "target");
-                                                            int amount = IntegerArgumentType.getInteger(source, "integer");
+                                                            int amount = IntegerArgumentType.getInteger(source, "amount");
                                                             if (amount <= 0) {
                                                                 source.getSource().sendError(Text.literal("Need at least 1 rod!"));
                                                                 return 0;
@@ -745,6 +745,66 @@ public final class CommandRegister {
                                                 )
                                         )
                                 ))
+
+                                // concentrated
+
+                                .then(literal("concentrated")
+                                        .executes(source -> {
+                                            if (!(source.getSource().getEntity() instanceof ServerPlayerEntity user)) return 0;
+                                            ItemStack toGive = ConcentratedShot.create(null);
+                                            if (!user.giveItemStack(toGive)) user.dropItem(toGive, true);
+                                            source.getSource().sendFeedback(() -> Text.empty()
+                                                            .append(Text.literal("Gave you ").formatted(Formatting.BLUE))
+                                                            .append(Text.literal("1").formatted(Formatting.BLUE, Formatting.UNDERLINE))
+                                                            .append(Text.literal(" Concentrated Shot !").formatted(Formatting.BLUE)),
+                                                    true
+                                            );
+                                            return 1;
+                                        })
+                                        .then(argument("amount", IntegerArgumentType.integer())
+                                                .executes(source -> {
+                                                    if (!(source.getSource().getEntity() instanceof ServerPlayerEntity user)) return 0;
+                                                    int amount = IntegerArgumentType.getInteger(source, "amount");
+                                                    if (amount <= 0) {
+                                                        source.getSource().sendError(Text.literal("Need at least 1 rod!"));
+                                                        return 0;
+                                                    }
+                                                    for (int i = 0; i < amount; i++) {
+                                                        ItemStack toGive = ConcentratedShot.create(null);
+                                                        if (!user.giveItemStack(toGive)) user.dropItem(toGive, true);
+                                                    }
+                                                    source.getSource().sendFeedback(() -> Text.empty()
+                                                                    .append(Text.literal("Gave you ").formatted(Formatting.BLUE))
+                                                                    .append(Text.literal(String.valueOf(amount)).formatted(Formatting.BLUE, Formatting.UNDERLINE))
+                                                                    .append(Text.literal(" Concentrated Shot !").formatted(Formatting.BLUE)),
+                                                            true
+                                                    );
+                                                    return 1;
+                                                })
+                                                .then(argument("target", Vec2ArgumentType.vec2())
+                                                        .executes(source -> {
+                                                            if (!(source.getSource().getEntity() instanceof ServerPlayerEntity user)) return 0;
+                                                            Vec2f target = Vec2ArgumentType.getVec2(source, "target");
+                                                            int amount = IntegerArgumentType.getInteger(source, "amount");
+                                                            if (amount <= 0) {
+                                                                source.getSource().sendError(Text.literal("Need at least 1 rod!"));
+                                                                return 0;
+                                                            }
+                                                            for (int i = 0; i < amount; i++) {
+                                                                ItemStack toGive = ConcentratedShot.create((int) target.x, (int) target.y, null, user.getEntityWorld().getRegistryKey());
+                                                                if (!user.giveItemStack(toGive)) user.dropItem(toGive, true);
+                                                            }
+                                                            source.getSource().sendFeedback(() -> Text.empty()
+                                                                            .append(Text.literal("Gave you ").formatted(Formatting.BLUE))
+                                                                            .append(Text.literal(String.valueOf(amount)).formatted(Formatting.BLUE, Formatting.UNDERLINE))
+                                                                            .append(Text.literal(" Concentrated Shot !").formatted(Formatting.BLUE)),
+                                                                    true
+                                                            );
+                                                            return 1;
+                                                        })
+                                                )
+                                        )
+                                )
 
                         )
         ));

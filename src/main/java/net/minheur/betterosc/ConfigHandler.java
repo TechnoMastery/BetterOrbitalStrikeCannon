@@ -77,5 +77,7 @@ public final class ConfigHandler {
         public final int nukeRingAmount = 10;
         // crash pig
         public final int pigAmount = 5000;
+        // concentrated
+        public final int concentratedTnts = 50;
     }
 }
