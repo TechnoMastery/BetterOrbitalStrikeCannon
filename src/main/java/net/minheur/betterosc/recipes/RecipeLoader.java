@@ -30,13 +30,14 @@ public final class RecipeLoader {
             }
 
             List<Recipe> recipes = new ArrayList<>();
-            try (Stream<Path> paths = Files.list(RECIPE_FOLDER)) {
-                for (Path path : paths.toList()) {
-                    if (!path.getFileName().toString().endsWith(".json")) continue;
-                    try {
-                        recipes.add(loadFile(path));
-                    } catch (Exception ignored) {}
-                }
+            try (Stream<Path> paths = Files.walk(RECIPE_FOLDER)) {
+                paths.filter(Files::isRegularFile)
+                        .filter(path -> path.getFileName().toString().endsWith(".json"))
+                        .forEach(path -> {
+                            try {
+                                recipes.add(loadFile(path));
+                            } catch (Exception ignored) {}
+                        });
             }
 
             return recipes;
