@@ -85,7 +85,7 @@ public final class TankHandler {
 
         tank.set(DataComponentTypes.CUSTOM_NAME, Text.empty()
                 .append(Text.literal("Tank of ").formatted(Formatting.AQUA))
-                .append(Text.translatable(stored.getTranslationKey()).formatted(Formatting.AQUA, Formatting.BOLD)));
+                .append(stored.getName()));
         tank.set(DataComponentTypes.LORE, new LoreComponent(List.of(
                 Text.literal("Amount stored:").formatted(Formatting.DARK_GRAY),
                 Text.literal(String.valueOf(amount)).formatted(Formatting.UNDERLINE, Formatting.GOLD)
