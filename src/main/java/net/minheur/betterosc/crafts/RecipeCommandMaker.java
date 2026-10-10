@@ -1,6 +1,7 @@
 package net.minheur.betterosc.crafts;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.tree.CommandNode;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -37,7 +38,8 @@ public final class RecipeCommandMaker {
                     literal("commandCrafter")
 
                             .then(literal("craft").then(argument("recipe", IdentifierArgumentType.identifier())
-                                            .suggests(RECIPE_SUGGESTIONS).executes(CraftHandler::handleCraft)))
+                                            .suggests(RECIPE_SUGGESTIONS).executes(CraftHandler::handleCraft)
+                                    .then(argument("amount", IntegerArgumentType.integer()).executes(CraftHandler::handleChainedCraft))))
 
                             .then(literal("see").then(argument("recipe", IdentifierArgumentType.identifier())
                                     .suggests(RECIPE_SUGGESTIONS).executes(CraftHandler::seeRecipe)))

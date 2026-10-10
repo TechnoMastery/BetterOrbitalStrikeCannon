@@ -1,5 +1,6 @@
 package net.minheur.betterosc.crafts;
 
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.argument.IdentifierArgumentType;
 import net.minecraft.item.ItemStack;
@@ -45,6 +46,40 @@ public final class CraftHandler {
 
         craftItem(recipe, crafter);
         source.getSource().sendMessage(Text.literal("Here goes your craft!"));
+        return 1;
+    }
+    public static int handleChainedCraft(@NonNull CommandContext<ServerCommandSource> source) {
+        if (!(source.getSource().getEntity() instanceof ServerPlayerEntity crafter)) return 1;
+
+        Identifier recipeId = IdentifierArgumentType.getIdentifier(source, "recipe");
+        Recipe recipe = RecipesHandler.getFromId(recipeId.toString());
+
+        if (recipe == null) {
+            source.getSource().sendError(Text.literal("Did not found this recipe!"));
+            return 0;
+        }
+
+        int amount = IntegerArgumentType.getInteger(source, "amount"), crafted;
+
+        for (crafted = 0; crafted < amount; crafted++) {
+            List<ItemStack> allStacksInInv = getAvailableStacks(crafter);
+            boolean canCraft = recipe.matches(allStacksInInv);
+
+            if (!canCraft) break;
+
+            craftItem(recipe, crafter);
+        }
+
+        if (crafted == 0) {
+            source.getSource().sendError(Text.literal("You don't have enough resources to craft this!"));
+            source.getSource().sendError(Text.literal("Check ingredients with /commandCrafter see <recipe> first!"));
+            return 0;
+        }
+        source.getSource().sendMessage(Text.literal("Crafted " + crafted + " !"));
+        if (crafted != amount) {
+            source.getSource().sendError(Text.literal("You don't have enough resources to craft everything!"));
+            return 0;
+        }
         return 1;
     }
 
