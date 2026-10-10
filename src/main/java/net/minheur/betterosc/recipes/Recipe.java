@@ -8,6 +8,7 @@ import com.mojang.serialization.JsonOps;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -258,8 +259,8 @@ public record Recipe(String recipeId, ResultContainer result, List<IngredientMat
             return id == null;
         }
 
-        public ItemStack getAsStack() {
-            return resultAsStack;
+        public @Nullable ItemStack getAsStack() {
+            return resultAsStack == null ? null : resultAsStack.copy();
         }
 
         public String getId() {
