@@ -18,6 +18,7 @@ import net.minheur.betterosc.tank.TankHandler;
 import net.minheur.betterosc.tank.TankOperationHandler;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,13 +28,8 @@ public final class CraftHandler {
     public static int handleCraft(@NonNull CommandContext<ServerCommandSource> source) {
         if (!(source.getSource().getEntity() instanceof ServerPlayerEntity crafter)) return 1;
 
-        Identifier recipeId = IdentifierArgumentType.getIdentifier(source, "recipe");
-        Recipe recipe = RecipesHandler.getFromId(recipeId.toString());
-
-        if (recipe == null) {
-            source.getSource().sendError(Text.literal("Did not found this recipe!"));
-            return 0;
-        }
+        Recipe recipe = getRecipe(source);
+        if (recipe == null) return 0;
 
         List<ItemStack> allStacksInInv = getAvailableStacks(crafter);
         boolean canCraft = recipe.matches(allStacksInInv);
@@ -51,13 +47,8 @@ public final class CraftHandler {
     public static int handleChainedCraft(@NonNull CommandContext<ServerCommandSource> source) {
         if (!(source.getSource().getEntity() instanceof ServerPlayerEntity crafter)) return 1;
 
-        Identifier recipeId = IdentifierArgumentType.getIdentifier(source, "recipe");
-        Recipe recipe = RecipesHandler.getFromId(recipeId.toString());
-
-        if (recipe == null) {
-            source.getSource().sendError(Text.literal("Did not found this recipe!"));
-            return 0;
-        }
+        Recipe recipe = getRecipe(source);
+        if (recipe == null) return 0;
 
         int amount = IntegerArgumentType.getInteger(source, "amount"), crafted;
 
@@ -208,6 +199,17 @@ public final class CraftHandler {
         returnValue.removeIf(stack -> stack == null || stack.isEmpty() || stack.isOf(Items.AIR));
 
         return returnValue;
+    }
+
+    private static @Nullable Recipe getRecipe(CommandContext<ServerCommandSource> source) {
+        Identifier recipeId = IdentifierArgumentType.getIdentifier(source, "recipe");
+        Recipe recipe = RecipesHandler.getFromId(recipeId.toString());
+
+        if (recipe == null) {
+            source.getSource().sendError(Text.literal("Did not found this recipe!"));
+            return null;
+        }
+        return recipe;
     }
 
 }
