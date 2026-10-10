@@ -78,6 +78,11 @@ public final class CraftHandler {
     }
 
     public static void craftItem(@NonNull Recipe recipe, ServerPlayerEntity crafter) {
+        ItemStack result = recipe.result().getIsByStack() ? recipe.result().getAsStack() :
+                ExecutorHandler.mkFromResultContainer(recipe.result(), crafter);
+        if (result == null || result.isEmpty())
+            throw new IllegalStateException("Recipe result cannot be empty: " + recipe.recipeId());
+
         for (Recipe.IngredientMatcher ingredient : recipe.ingredients()) {
 
             int mainHandFound = checkFoundAndConsume(ingredient, crafter.getStackInHand(Hand.MAIN_HAND), 0,
@@ -96,9 +101,6 @@ public final class CraftHandler {
                 if (totalFound >= ingredient.count()) break;
             }
         }
-
-        ItemStack result = recipe.result().getIsByStack() ? recipe.result().getAsStack() :
-                ExecutorHandler.mkFromResultContainer(recipe.result(), crafter);
 
         if (!crafter.giveItemStack(result)) crafter.dropItem(result, true);
     }
