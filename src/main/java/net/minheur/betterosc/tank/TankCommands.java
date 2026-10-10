@@ -2,6 +2,7 @@ package net.minheur.betterosc.tank;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.LongArgumentType;
+import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.command.argument.UuidArgumentType;
@@ -11,6 +12,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minheur.betterosc.CommandRegister;
+import org.jspecify.annotations.NonNull;
 
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -34,76 +36,8 @@ public final class TankCommands {
             dispatcher.register(
                     literal("tank")
 
-                            .then(literal("create").executes(source -> {
-                                if (!(source.getSource().getEntity() instanceof ServerPlayerEntity user)) return 0;
-                                ItemStack mainHand = user.getMainHandStack();
-
-                                if (!IllegalTankItems.isItemAllowed(mainHand)) {
-                                    source.getSource().sendError(Text.literal("Can't store this item in a tank!"));
-                                    source.getSource().sendError(Text.literal("Try holding a correct item in your main hand!"));
-                                    return 0;
-                                }
-
-                                ItemStack tank = TankHandler.createTank(mainHand);
-                                if (tank == null) {
-                                    source.getSource().sendError(Text.literal("Couldn't create tank!"));
-                                    return 0;
-                                }
-
-                                user.setStackInHand(Hand.MAIN_HAND, tank);
-
-                                for (int i = 0; i < user.getInventory().size(); i++) {
-                                    ItemStack target = user.getInventory().getStack(i);
-                                    final int index = i;
-                                    if (!TankOperationHandler.safeIncrement(tank, target, (stack -> user.getInventory().setStack(index, stack))))
-                                        break;
-                                }
-
-                                ItemStack offHand = user.getOffHandStack();
-                                TankOperationHandler.safeIncrement(tank, offHand, (stack) -> user.setStackInHand(Hand.OFF_HAND, stack));
-
-                                return 1;
-                            }).then(argument("maxAmount", IntegerArgumentType.integer()).executes(source -> {
-                                if (!(source.getSource().getEntity() instanceof ServerPlayerEntity user)) return 0;
-                                ItemStack mainHand = user.getMainHandStack();
-
-                                if (!IllegalTankItems.isItemAllowed(mainHand)) {
-                                    source.getSource().sendError(Text.literal("Can't store this item in a tank!"));
-                                    source.getSource().sendError(Text.literal("Try holding a correct item in your main hand!"));
-                                    return 0;
-                                }
-
-                                int maxAmount = IntegerArgumentType.getInteger(source, "maxAmount");
-                                if (maxAmount <= 0) {
-                                    source.getSource().sendError(Text.literal("Can't store maximum amount of 0!"));
-                                    return 0;
-                                }
-
-                                maxAmount -= mainHand.getCount();
-
-                                ItemStack tank = TankHandler.createTank(mainHand);
-                                if (tank == null) {
-                                    source.getSource().sendError(Text.literal("Couldn't create tank!"));
-                                    return 0;
-                                }
-
-                                user.setStackInHand(Hand.MAIN_HAND, tank);
-
-                                if (maxAmount > 0) for (int i = 0; i < user.getInventory().size(); i++) {
-                                    ItemStack target = user.getInventory().getStack(i);
-                                    final int amountStored = target.getCount();
-                                    maxAmount -= amountStored;
-                                    if (maxAmount < 0) break;
-                                    final int index = i;
-                                    if (!TankOperationHandler.safeIncrement(tank, target, (stack -> user.getInventory().setStack(index, stack))))
-                                        break;
-                                }
-
-                                ItemStack offHand = user.getOffHandStack();
-                                TankOperationHandler.safeIncrement(tank, offHand, (stack) -> user.setStackInHand(Hand.OFF_HAND, stack));
-
-                                return 1;
-                            })))
+                            .then(literal("create").executes(TankCommands::handleSimpleCreate)
+                                    .then(argument("maxAmount", IntegerArgumentType.integer()).executes(TankCommands::handleMaxedCreate)))
 
                             .then(literal("add").then(literal("all").executes(source -> {
                                         if (!(source.getSource().getEntity() instanceof ServerPlayerEntity user)) return 0;
@@ -289,11 +223,86 @@ public final class TankCommands {
             );
 
             dispatcher.register(literal("t").redirect(dispatcher.getRoot().getChild("tank")));
-            dispatcher.register(literal("tc").redirect(dispatcher.getRoot().getChild("tank").getChild("create")));
+            dispatcher.register(literal("tc")
+                    .executes(TankCommands::handleSimpleCreate)
+                    .redirect(dispatcher.getRoot().getChild("tank").getChild("create")));
             dispatcher.register(literal("ta").redirect(dispatcher.getRoot().getChild("tank").getChild("add")));
             dispatcher.register(literal("tw").redirect(dispatcher.getRoot().getChild("tank").getChild("withdraw")));
 
         });
+    }
+
+    private static int handleSimpleCreate(@NonNull CommandContext<ServerCommandSource> source) {
+        if (!(source.getSource().getEntity() instanceof ServerPlayerEntity user)) return 0;
+        ItemStack mainHand = user.getMainHandStack();
+
+        if (!IllegalTankItems.isItemAllowed(mainHand)) {
+            source.getSource().sendError(Text.literal("Can't store this item in a tank!"));
+            source.getSource().sendError(Text.literal("Try holding a correct item in your main hand!"));
+            return 0;
+        }
+
+        ItemStack tank = TankHandler.createTank(mainHand);
+        if (tank == null) {
+            source.getSource().sendError(Text.literal("Couldn't create tank!"));
+            return 0;
+        }
+
+        user.setStackInHand(Hand.MAIN_HAND, tank);
+
+        for (int i = 0; i < user.getInventory().size(); i++) {
+            ItemStack target = user.getInventory().getStack(i);
+            final int index = i;
+            if (!TankOperationHandler.safeIncrement(tank, target, (stack -> user.getInventory().setStack(index, stack))))
+                break;
+        }
+
+        ItemStack offHand = user.getOffHandStack();
+        TankOperationHandler.safeIncrement(tank, offHand, (stack) -> user.setStackInHand(Hand.OFF_HAND, stack));
+
+        return 1;
+
+    }
+    private static int handleMaxedCreate(@NonNull CommandContext<ServerCommandSource> source) {
+        if (!(source.getSource().getEntity() instanceof ServerPlayerEntity user)) return 0;
+        ItemStack mainHand = user.getMainHandStack();
+
+        if (!IllegalTankItems.isItemAllowed(mainHand)) {
+            source.getSource().sendError(Text.literal("Can't store this item in a tank!"));
+            source.getSource().sendError(Text.literal("Try holding a correct item in your main hand!"));
+            return 0;
+        }
+
+        int maxAmount = IntegerArgumentType.getInteger(source, "maxAmount");
+        if (maxAmount <= 0) {
+            source.getSource().sendError(Text.literal("Can't store maximum amount of 0!"));
+            return 0;
+        }
+
+        maxAmount -= mainHand.getCount();
+
+        ItemStack tank = TankHandler.createTank(mainHand);
+        if (tank == null) {
+            source.getSource().sendError(Text.literal("Couldn't create tank!"));
+            return 0;
+        }
+
+        user.setStackInHand(Hand.MAIN_HAND, tank);
+
+        if (maxAmount > 0) for (int i = 0; i < user.getInventory().size(); i++) {
+            ItemStack target = user.getInventory().getStack(i);
+            final int amountStored = target.getCount();
+            maxAmount -= amountStored;
+            if (maxAmount < 0) break;
+            final int index = i;
+            if (!TankOperationHandler.safeIncrement(tank, target, (stack -> user.getInventory().setStack(index, stack))))
+                break;
+        }
+
+        ItemStack offHand = user.getOffHandStack();
+        TankOperationHandler.safeIncrement(tank, offHand, (stack) -> user.setStackInHand(Hand.OFF_HAND, stack));
+
+        return 1;
     }
 
 }
