@@ -442,7 +442,6 @@ public final class CommandRegister {
                                                                     .executes(source -> { // NUKE - amount & ring & target
                                                                         if (!(source.getSource().getEntity() instanceof ServerPlayerEntity user))
                                                                             return 0;
-                                                                        int ringAmount = IntegerArgumentType.getInteger(source, "rings");
                                                                         int amount = IntegerArgumentType.getInteger(source, "amount");
                                                                         if (amount <= 0) {
                                                                             source.getSource().sendError(Text.literal("Need at least 1 rod!"));
