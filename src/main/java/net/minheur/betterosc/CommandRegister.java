@@ -95,6 +95,21 @@ public final class CommandRegister {
                                             )
                                     ))
 
+                                    // wither
+
+                                    .then(literal("wither")
+                                            .executes(source -> {
+                                                if (!(source.getSource().getEntity() instanceof ServerPlayerEntity user))
+                                                    return 0;
+                                                int x = user.getBlockX();
+                                                int z = user.getBlockZ();
+                                                BlueSkull.spawn(source.getSource().getWorld(), x, z);
+                                                source.getSource().sendFeedback(
+                                                        () -> Text.literal("<!> Skull Nuke Incoming <!> x " + x + " z " + z).formatted(Formatting.DARK_BLUE),
+                                                        true);
+                                                return 1;
+                                            }))
+
                                     // NUKE
 
                                     .then(literal("nuke")
