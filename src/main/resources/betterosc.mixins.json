@@ -5,8 +5,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "LivingEntityMixin",
-    "AnvilScreenHandlerMixin",
-    "ShapedRecipeMixin"
+    "RecipePathAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

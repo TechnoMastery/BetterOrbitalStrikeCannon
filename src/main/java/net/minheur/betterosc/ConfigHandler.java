@@ -56,12 +56,6 @@ public final class ConfigHandler {
     }
 
     public static class ConfigData {
-        // illegal tank
-        public final List<String> illegalTanksItems = List.of(
-                "minecraft:bedrock", "minecraft:barrier", "minecraft:command_block", "minecraft:structure_block",
-                "minecraft:chain_command_block", "minecraft:repeat_command_block"
-        );
-
         public final double rodCastDelay = 0.75f;
 
         // railgun

@@ -7,41 +7,39 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Hand;
-import net.minheur.betterosc.crafts.DefaultRecipesHandler;
-import net.minheur.betterosc.crafts.RecipeCommandMaker;
-import net.minheur.betterosc.recipes.RecipesHandler;
-import net.minheur.betterosc.tank.TankCommands;
-import net.minheur.betterosc.tank.TankHandler;
+import net.minheur.betterosc.plugin.DefaultRecipesHandler;
+import net.minheur.betterosc.plugin.CommandCrafterPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.file.Path;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class Betterosc implements ModInitializer {
 
     public static final String MODID = "betterosc";
     public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
 
+    public static final AtomicBoolean isCommandCrafterModPresent = new AtomicBoolean(false);
+
     @Override
     public void onInitialize() {
         ConfigHandler.load();
         UsedItemsHandler.load();
-        DefaultRecipesHandler.checkAndCreate();
-        RecipesHandler.loadRecipes();
+
+        if (FabricLoader.getInstance().isModLoaded("craftbycommands")) isCommandCrafterModPresent.set(true);
+
+        if (isCommandCrafterModPresent.get()) {
+            DefaultRecipesHandler.checkAndCreate();
+            new CommandCrafterPlugin();
+        }
 
         ExecutorHandler.registerUsage();
-
         ServerLifecycleEvents.BEFORE_SAVE.register((server, flush, force) -> {
             ConfigHandler.save();
             UsedItemsHandler.save();
         });
 
-        ServerLifecycleEvents.SERVER_STARTED.register(TankHandler::loadTanks);
-        ServerLifecycleEvents.SERVER_STOPPING.register(TankHandler::unloadTanks);
-
         CommandRegister.register();
-        TankCommands.register();
-        RecipeCommandMaker.register();
     }
 
     public static void breakOrbitalCallItem(ServerPlayerEntity player, Hand hand, ItemStack stack) {
