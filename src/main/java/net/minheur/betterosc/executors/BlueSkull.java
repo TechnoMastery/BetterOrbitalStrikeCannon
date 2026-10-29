@@ -7,15 +7,25 @@ import net.minecraft.entity.projectile.WitherSkullEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 import net.minheur.betterosc.Betterosc;
+import net.minheur.betterosc.ConfigHandler;
+import net.minheur.betterosc.UsedItemsHandler;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
+
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.UUID;
 
 import static net.minheur.betterosc.executors.ExecutorsHelpers.*;
 
@@ -37,6 +47,40 @@ public final class BlueSkull {
     }
     public static @NonNull ItemStack create() {
         return create(null, null, null, null);
+    }
+
+    public static ActionResult handle(ServerPlayerEntity player, UUID itemUUID, NbtCompound nbt, Hand hand, ItemStack stack) {
+        if (!UsedItemsHandler.getCastedFishingRods().contains(itemUUID)) {
+            UsedItemsHandler.getCastedFishingRods().add(itemUUID);
+
+            if (UsedItemsHandler.getUsedItems().contains(itemUUID)) return ActionResult.PASS;
+            UsedItemsHandler.getUsedItems().add(itemUUID);
+
+            ServerWorld world = player.getEntityWorld();
+
+            ResultXZDim resultXZDim = getXZDim(nbt, world, player);
+            if (resultXZDim.returnsPass()) return ActionResult.PASS;
+            int x = resultXZDim.x(), z = resultXZDim.z();
+            ServerWorld targetWorld = resultXZDim.targetWorld();
+
+            Integer skullAmount = nbt.getInt("skullAmount").orElse(ConfigHandler.getConfig().skullAmount);
+            long delay = (long) (ConfigHandler.getConfig().rodCastDelay * 1000.0f);
+
+            MinecraftServer server = world.getServer();
+            if (server == null) return ActionResult.PASS;
+
+            server.execute(() -> new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    server.execute(() -> spawn(targetWorld, x, z, skullAmount));
+                }
+            }, delay));
+            return ActionResult.PASS;
+        } else {
+            UsedItemsHandler.getCastedFishingRods().remove(itemUUID);
+            Betterosc.breakOrbitalCallItem(player, hand, stack);
+            return ActionResult.SUCCESS;
+        }
     }
 
     public static void spawn(@NonNull World world, int centerX, int centerZ, int skullCount) {
