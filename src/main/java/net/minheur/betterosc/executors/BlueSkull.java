@@ -22,7 +22,7 @@ import java.util.Arrays;
 
 import static net.minheur.betterosc.executors.ExecutorsHelpers.*;
 
-public class BlueSkull {
+public final class BlueSkull {
     public static final String TYPE_FIXED = "wither_fixed";
     public static final String TYPE_MOBILE = "wither_mobile";
 
