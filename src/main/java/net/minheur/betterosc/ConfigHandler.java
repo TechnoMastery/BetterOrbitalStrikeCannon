@@ -73,5 +73,7 @@ public final class ConfigHandler {
         public final int pigAmount = 5000;
         // concentrated
         public final int concentratedTnts = 50;
+        // wither
+        public final int skullAmount = 300;
     }
 }

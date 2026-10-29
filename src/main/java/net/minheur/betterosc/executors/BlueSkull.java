@@ -38,12 +38,11 @@ public final class BlueSkull {
         return create(null, null, null);
     }
 
-    public static void spawn(@NonNull World world, int centerX, int centerZ) {
+    public static void spawn(@NonNull World world, int centerX, int centerZ, int skullCount) {
         // FIND y VALUE
         int centerY = world.getTopY(Heightmap.Type.WORLD_SURFACE, centerX, centerZ) +35; // get top block & tempo
 
         double goldenAngle = Math.PI * (3.0 - Math.sqrt(5.0));
-        final int skullCount = 100; // hardcoded value for debug TODO: def in config file
 
         for (int i = 0; i < skullCount; i++) {
             WitherSkullEntity skull = mk(world, centerX, centerY, centerZ);
