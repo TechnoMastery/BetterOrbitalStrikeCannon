@@ -23,19 +23,20 @@ public final class BlueSkull {
     public static final String TYPE_FIXED = "wither_fixed";
     public static final String TYPE_MOBILE = "wither_mobile";
 
-    @Contract("null, !null, _ -> fail; !null, null, _ -> fail; null, null, !null -> fail; !null, !null, null -> fail")
-    public static @NonNull ItemStack create(@Nullable Integer x, @Nullable Integer z, @Nullable RegistryKey<World> world) {
+    @Contract("null, !null, _, _ -> fail; !null, null, _, _ -> fail; null, null, !null, _ -> fail; !null, !null, null, _ -> fail")
+    public static @NonNull ItemStack create(@Nullable Integer x, @Nullable Integer z, @Nullable RegistryKey<World> world, @Nullable Integer skullAmount) {
         checkPositionedArgumentsNullStates(x, z, world);
         ItemStack stack = mkDefaultRod();
         stack.set(DataComponentTypes.CUSTOM_NAME, Text.literal("Blue wither skull shot"));
 
         NbtCompound nbt = nullableXZNbt(x, z, world, TYPE_MOBILE, TYPE_FIXED);
+        if (skullAmount != null) nbt.putInt("skullAmount", skullAmount);
 
         stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
         return stack;
     }
     public static @NonNull ItemStack create() {
-        return create(null, null, null);
+        return create(null, null, null, null);
     }
 
     public static void spawn(@NonNull World world, int centerX, int centerZ, int skullCount) {
