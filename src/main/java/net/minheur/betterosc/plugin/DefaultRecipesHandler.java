@@ -18,6 +18,7 @@ public final class DefaultRecipesHandler {
             "stab/fixed.json", "stab/mobile.json",
             "stasis/fixed.json", "stasis/mobile.json",
             "totem_stasis/fixed.json", "totem_stasis/mobile.json",
+            "wither/fixed.json", "wither/mobile.json",
             "wolves/fixed.json", "wolves/mobile.json",
             "crashpig.json",
             "darkness.json",

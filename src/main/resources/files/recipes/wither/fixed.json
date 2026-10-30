@@ -1,0 +1,29 @@
+{
+  "id": "osc:fixed_wither",
+  "result": {
+    "id": "betterosc:wither_fixed",
+    "extra": {}
+  },
+  "ingredients": [
+    {
+      "id": "minecraft:tnt",
+      "count": 100
+    },
+    {
+      "id": "minecraft:soul_sand",
+      "count": 100
+    },
+    {
+      "id": "minecraft:wither_skull",
+      "count": 50
+    },
+    {
+      "id": "minecraft:fishing_rod",
+      "match": {
+        "forbidden": [
+          "components.minecraft:custom_data.oc_type"
+        ]
+      }
+    }
+  ]
+}

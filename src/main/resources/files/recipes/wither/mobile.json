@@ -1,0 +1,33 @@
+{
+  "id": "osc:mobile_wither",
+  "result": {
+    "id": "betterosc:wither_mobile",
+    "extra": {}
+  },
+  "ingredients": [
+    {
+      "id": "minecraft:tnt",
+      "count": 500
+    },
+    {
+      "id": "minecraft:soul_sand",
+      "count": 500
+    },
+    {
+      "id": "minecraft:wither_skull",
+      "count": 70
+    },
+    {
+      "id": "minecraft:fishing_rod",
+      "match": {
+        "forbidden": [
+          "components.minecraft:custom_data.oc_type"
+        ]
+      }
+    },
+    {
+      "id": "minecraft:ender_pearl",
+      "count": 15
+    }
+  ]
+}
