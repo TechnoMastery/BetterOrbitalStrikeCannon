@@ -26,6 +26,7 @@ import org.jspecify.annotations.NonNull;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static net.minheur.betterosc.executors.ExecutorsHelpers.*;
 
@@ -112,6 +113,12 @@ public final class BlueSkull {
             float pitch = (float) Math.toDegrees(
                     Math.atan2(-y, Math.sqrt(x * x + z * z))
             );
+
+            // apply random
+            float randomOffset = ConfigHandler.getConfig().skullRandomOffset;
+            yaw += ThreadLocalRandom.current().nextFloat(-randomOffset, randomOffset);
+            pitch += ThreadLocalRandom.current().nextFloat(-randomOffset, randomOffset);
+            pitch = (float) Math.clamp(pitch, -90.0, 90.0); // normalize pitch
 
             skull.setYaw(yaw);
             skull.setPitch(pitch);
