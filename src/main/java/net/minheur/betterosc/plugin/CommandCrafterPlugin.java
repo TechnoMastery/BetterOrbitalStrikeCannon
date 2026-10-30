@@ -69,6 +69,27 @@ public class CommandCrafterPlugin {
                 int ringAmount = result.getExtra().get("ringAmount").getAsInt();
                 yield Nuke.create(ringAmount);
             }
+            case BlueSkull.TYPE_FIXED -> {
+                JsonElement skullAmountEle = result.getExtra().get("skullAmount");
+                JsonElement maxSkullAngleEle = result.getExtra().get("skullAngle");
+                Integer skullAmount = skullAmountEle == null ? null : skullAmountEle.getAsInt();
+                Double maxSkullAngle = maxSkullAngleEle == null ? null : maxSkullAngleEle.getAsDouble();
+
+                int x = crafter.getBlockX();
+                int z = crafter.getBlockZ();
+                yield BlueSkull.create(x, z, crafter.getEntityWorld().getRegistryKey(),
+                        skullAmount, maxSkullAngle);
+            }
+            case BlueSkull.TYPE_MOBILE -> {
+                JsonElement skullAmountEle = result.getExtra().get("skullAmount");
+                JsonElement maxSkullAngleEle = result.getExtra().get("skullAngle");
+                Integer skullAmount = skullAmountEle == null ? null : skullAmountEle.getAsInt();
+                Double maxSkullAngle = maxSkullAngleEle == null ? null : maxSkullAngleEle.getAsDouble();
+
+                if (skullAmount == null && maxSkullAngle == null) yield BlueSkull.create();
+                yield BlueSkull.create(null, null, null,
+                        skullAmount, maxSkullAngle);
+            }
             case Railgun.TYPE_STRAIGHT -> {
                 JsonElement radius = result.getExtra().get("radius");
                 if (radius == null) yield Railgun.createStraight();
