@@ -104,7 +104,8 @@ public final class CommandRegister {
                                                 int x = user.getBlockX();
                                                 int z = user.getBlockZ();
                                                 BlueSkull.spawn(source.getSource().getWorld(), x, z,
-                                                        ConfigHandler.getConfig().skullAmount);
+                                                        ConfigHandler.getConfig().skullAmount,
+                                                        ConfigHandler.getConfig().maximumSkullAngle);
                                                 source.getSource().sendFeedback(
                                                         () -> Text.literal("<!> Skull Nuke Incoming <!> x " + x + " z " + z).formatted(Formatting.DARK_BLUE),
                                                         true);

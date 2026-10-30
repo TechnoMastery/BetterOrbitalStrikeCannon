@@ -74,6 +74,8 @@ public final class ConfigHandler {
         // concentrated
         public final int concentratedTnts = 50;
         // wither
-        public final int skullAmount = 300;
+        public final int skullAmount = 1000;
+        public final double maximumSkullAngle = 20.0;
+        private final String skullAngleDesc = "The angle defines where will look the highest skulls. 0 = horizontal, higher values mean lower, so a more concentrated shot on where the origin is. 0 min, 90 max (not recommended). This value is descriptive and not meant to be changed.";
     }
 }

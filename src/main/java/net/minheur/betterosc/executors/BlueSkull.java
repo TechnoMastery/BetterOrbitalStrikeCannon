@@ -33,20 +33,22 @@ public final class BlueSkull {
     public static final String TYPE_FIXED = "wither_fixed";
     public static final String TYPE_MOBILE = "wither_mobile";
 
-    @Contract("null, !null, _, _ -> fail; !null, null, _, _ -> fail; null, null, !null, _ -> fail; !null, !null, null, _ -> fail")
-    public static @NonNull ItemStack create(@Nullable Integer x, @Nullable Integer z, @Nullable RegistryKey<World> world, @Nullable Integer skullAmount) {
+    @Contract("null, !null, _,_,_ -> fail; !null, null, _,_,_ -> fail; null, null, !null, _,_ -> fail; !null, !null, null, _,_ -> fail")
+    public static @NonNull ItemStack create(@Nullable Integer x, @Nullable Integer z, @Nullable RegistryKey<World> world,
+                                            @Nullable Integer skullAmount, @Nullable Double maxSkullAngle) {
         checkPositionedArgumentsNullStates(x, z, world);
         ItemStack stack = mkDefaultRod();
         stack.set(DataComponentTypes.CUSTOM_NAME, Text.literal("Blue wither skull shot"));
 
         NbtCompound nbt = nullableXZNbt(x, z, world, TYPE_MOBILE, TYPE_FIXED);
         if (skullAmount != null) nbt.putInt("skullAmount", skullAmount);
+        if (maxSkullAngle != null) nbt.putDouble("skullAngle", maxSkullAngle);
 
         stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
         return stack;
     }
     public static @NonNull ItemStack create() {
-        return create(null, null, null, null);
+        return create(null, null, null, null, null);
     }
 
     public static ActionResult handle(ServerPlayerEntity player, UUID itemUUID, NbtCompound nbt, Hand hand, ItemStack stack) {
@@ -63,7 +65,8 @@ public final class BlueSkull {
             int x = resultXZDim.x(), z = resultXZDim.z();
             ServerWorld targetWorld = resultXZDim.targetWorld();
 
-            Integer skullAmount = nbt.getInt("skullAmount").orElse(ConfigHandler.getConfig().skullAmount);
+            int skullAmount = nbt.getInt("skullAmount").orElse(ConfigHandler.getConfig().skullAmount);
+            double maxSkullAngle = nbt.getDouble("skullAngle").orElse(ConfigHandler.getConfig().maximumSkullAngle);
             long delay = (long) (ConfigHandler.getConfig().rodCastDelay * 1000.0f);
 
             MinecraftServer server = world.getServer();
@@ -72,7 +75,7 @@ public final class BlueSkull {
             server.execute(() -> new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    server.execute(() -> spawn(targetWorld, x, z, skullAmount));
+                    server.execute(() -> spawn(targetWorld, x, z, skullAmount, maxSkullAngle));
                 }
             }, delay));
             return ActionResult.PASS;
@@ -83,7 +86,7 @@ public final class BlueSkull {
         }
     }
 
-    public static void spawn(@NonNull World world, int centerX, int centerZ, int skullCount) {
+    public static void spawn(@NonNull World world, int centerX, int centerZ, int skullCount, double maximumSkullAngle) {
         // FIND y VALUE
         int centerY = world.getTopY(Heightmap.Type.WORLD_SURFACE, centerX, centerZ) +35; // get top block & tempo
 
@@ -92,8 +95,12 @@ public final class BlueSkull {
         for (int i = 0; i < skullCount; i++) {
             WitherSkullEntity skull = mk(world, centerX, centerY, centerZ);
 
-            // y varie de presque 0 à presque -1 : hémisphère inférieur
-            double y = -(i + 0.5) / skullCount;
+            double progress = (i + 0.5) / skullCount;
+
+            // 0° conserve tout l'hémisphère bas. Une valeur supérieure
+            // supprime progressivement les trajectoires proches de l'horizontale.
+            double highestY = -Math.sin(Math.toRadians(maximumSkullAngle));
+            double y = -1.0 + (highestY + 1.0) * progress;
             double r = Math.sqrt(1.0 - y * y);
             double phi = i * goldenAngle;
 
