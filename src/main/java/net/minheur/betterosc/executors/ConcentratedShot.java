@@ -26,7 +26,7 @@ import java.util.UUID;
 
 import static net.minheur.betterosc.executors.ExecutorsHelpers.*;
 
-public class ConcentratedShot {
+public final class ConcentratedShot {
     public static final String TYPE_FIXED = "concentrated_fixed";
     public static final String TYPE_MOBILE = "concentrated_mobile";
 
