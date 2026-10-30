@@ -58,6 +58,7 @@ public final class ExecutorHandler {
                     case ConcentratedShot.TYPE_FIXED, ConcentratedShot.TYPE_MOBILE ->
                             ConcentratedShot.handle(serverPlayer, uuid, nbt, hand, stack);
                     case Nuke.TYPE_FIXED, Nuke.TYPE_MOBILE -> Nuke.handle(serverPlayer, uuid, nbt, hand, stack);
+                    case BlueSkull.TYPE_FIXED, BlueSkull.TYPE_MOBILE -> BlueSkull.handle(serverPlayer, uuid, nbt, hand, stack);
                     case Stab.TYPE_FIXED, Stab.TYPE_MOBILE -> Stab.handle(serverPlayer, uuid, nbt, hand, stack);
                     case TpStasis.TYPE_FIXED, TpStasis.TYPE_MOBILE ->
                             TpStasis.handle(serverPlayer, uuid, nbt, hand, stack);
