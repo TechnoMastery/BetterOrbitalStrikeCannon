@@ -56,12 +56,6 @@ public final class ConfigHandler {
     }
 
     public static class ConfigData {
-        // illegal tank
-        public final List<String> illegalTanksItems = List.of(
-                "minecraft:bedrock", "minecraft:barrier", "minecraft:command_block", "minecraft:structure_block",
-                "minecraft:chain_command_block", "minecraft:repeat_command_block"
-        );
-
         public final double rodCastDelay = 0.75f;
 
         // railgun
@@ -79,5 +73,11 @@ public final class ConfigHandler {
         public final int pigAmount = 5000;
         // concentrated
         public final int concentratedTnts = 50;
+        // wither
+        public final int skullAmount = 1000;
+        public final double maximumSkullAngle = 20.0;
+        private final String skullAngleDesc = "The angle defines where will look the highest skulls. 0 = horizontal, higher values mean lower, so a more concentrated shot on where the origin is. 0 min, 90 max (not recommended). This value is descriptive and not meant to be changed.";
+        public final float skullRandomOffset = 2.0f;
+        private final String skullRandomDesc = "Higher = more random. 0 = off. Value not meant to be changed (informative)";
     }
 }

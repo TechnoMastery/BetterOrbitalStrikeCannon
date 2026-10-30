@@ -95,6 +95,23 @@ public final class CommandRegister {
                                             )
                                     ))
 
+                                    // wither
+
+                                    .then(literal("wither")
+                                            .executes(source -> {
+                                                if (!(source.getSource().getEntity() instanceof ServerPlayerEntity user))
+                                                    return 0;
+                                                int x = user.getBlockX();
+                                                int z = user.getBlockZ();
+                                                BlueSkull.spawn(source.getSource().getWorld(), x, z,
+                                                        ConfigHandler.getConfig().skullAmount,
+                                                        ConfigHandler.getConfig().maximumSkullAngle);
+                                                source.getSource().sendFeedback(
+                                                        () -> Text.literal("<!> Skull Nuke Incoming <!> x " + x + " z " + z).formatted(Formatting.DARK_BLUE),
+                                                        true);
+                                                return 1;
+                                            }))
+
                                     // NUKE
 
                                     .then(literal("nuke")
@@ -376,6 +393,45 @@ public final class CommandRegister {
                                                     )
                                             )
                                     ))
+
+                                    // wither
+
+                                    .then(literal("wither")
+                                            .executes(source -> {
+                                                if (!(source.getSource().getEntity() instanceof ServerPlayerEntity user))
+                                                    return 0;
+                                                ItemStack toGive = BlueSkull.create();
+                                                if (!user.giveItemStack(toGive)) user.dropItem(toGive, true);
+                                                source.getSource().sendFeedback(() -> Text.empty()
+                                                                .append(Text.literal("Gave you ").formatted(Formatting.DARK_BLUE))
+                                                                .append(Text.literal("1").formatted(Formatting.DARK_BLUE, Formatting.UNDERLINE))
+                                                                .append(Text.literal(" Wither shot !").formatted(Formatting.DARK_BLUE)),
+                                                        true
+                                                );
+                                                return 1;
+                                            })
+                                            .then(argument("amount", IntegerArgumentType.integer())
+                                                    .executes(source -> {
+                                                        if (!(source.getSource().getEntity() instanceof ServerPlayerEntity user))
+                                                            return 0;
+                                                        int amount = IntegerArgumentType.getInteger(source, "amount");
+                                                        if (amount <= 0) {
+                                                            source.getSource().sendError(Text.literal("Need at least 1 rod!"));
+                                                            return 0;
+                                                        }
+                                                        for (int i = 0; i < amount; i++) {
+                                                            ItemStack toGive = BlueSkull.create();
+                                                            if (!user.giveItemStack(toGive))
+                                                                user.dropItem(toGive, true);
+                                                        }
+                                                        source.getSource().sendFeedback(() -> Text.empty()
+                                                                        .append(Text.literal("Gave you ").formatted(Formatting.DARK_BLUE))
+                                                                        .append(Text.literal(String.valueOf(amount)).formatted(Formatting.DARK_BLUE, Formatting.UNDERLINE))
+                                                                        .append(Text.literal(" Wither shot !").formatted(Formatting.DARK_BLUE)),
+                                                                true
+                                                        );
+                                                        return 1;
+                                                    })))
 
                                     // NUKE
 

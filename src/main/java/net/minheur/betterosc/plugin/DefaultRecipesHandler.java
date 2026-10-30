@@ -1,6 +1,6 @@
-package net.minheur.betterosc.crafts;
+package net.minheur.betterosc.plugin;
 
-import net.fabricmc.loader.api.FabricLoader;
+import net.minheur.betterosc.mixin.RecipePathAccessor;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,7 +9,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 public final class DefaultRecipesHandler {
-    private static final Path RECIPE_FOLDER = FabricLoader.getInstance().getConfigDir().resolve("betterosc/recipes");
+    private static final Path RECIPE_FOLDER = RecipePathAccessor.osc$RECIPE_FOLDER().resolve("betterOSC");
 
     public static final List<String> DEFAULT_RECIPES = List.of(
             "README.md",
@@ -18,6 +18,7 @@ public final class DefaultRecipesHandler {
             "stab/fixed.json", "stab/mobile.json",
             "stasis/fixed.json", "stasis/mobile.json",
             "totem_stasis/fixed.json", "totem_stasis/mobile.json",
+            "wither/fixed.json", "wither/mobile.json",
             "wolves/fixed.json", "wolves/mobile.json",
             "crashpig.json",
             "darkness.json",
