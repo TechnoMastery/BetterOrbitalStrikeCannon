@@ -1,7 +1,7 @@
 {
   "id": "osc:fixed_stab",
   "result": {
-    "id": "betterosc:stab_fixed",
+    "id": "custom:stab_fixed",
     "extra": {}
   },
   "ingredients": [

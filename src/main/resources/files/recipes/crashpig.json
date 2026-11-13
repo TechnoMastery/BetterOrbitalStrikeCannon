@@ -1,7 +1,7 @@
 {
   "id": "osc:crashpig",
   "result": {
-    "id": "betterosc:crash_pig",
+    "id": "custom:crash_pig",
     "extra": {
       "pigAmount": 5000
     }

@@ -1,7 +1,7 @@
 {
   "id": "osc:fixed_wither",
   "result": {
-    "id": "betterosc:wither_fixed",
+    "id": "custom:wither_fixed",
     "extra": {}
   },
   "ingredients": [

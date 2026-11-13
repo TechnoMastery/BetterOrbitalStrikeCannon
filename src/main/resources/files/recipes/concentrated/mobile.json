@@ -1,7 +1,7 @@
 {
   "id": "osc:mobile_concentrated",
   "result": {
-    "id": "betterosc:concentrated_mobile",
+    "id": "custom:concentrated_mobile",
     "extra": {}
   },
   "ingredients": [

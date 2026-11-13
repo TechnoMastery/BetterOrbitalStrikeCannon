@@ -1,7 +1,7 @@
 {
   "id": "osc:fixed_stasis",
   "result": {
-    "id": "betterosc:stasis_fixed",
+    "id": "custom:stasis_fixed",
     "extra": {}
   },
   "ingredients": [

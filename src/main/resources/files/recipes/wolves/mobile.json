@@ -1,7 +1,7 @@
 {
   "id": "osc:mobile_wolves",
   "result": {
-    "id": "betterosc:wolf_mobile",
+    "id": "custom:wolf_mobile",
     "extra": {
       "pigAmount": 5000
     }

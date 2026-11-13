@@ -1,7 +1,7 @@
 {
   "id": "osc:fixed_totem_stasis",
   "result": {
-    "id": "betterosc:totem_fixed",
+    "id": "custom:totem_fixed",
     "extra": {}
   },
   "ingredients": [
