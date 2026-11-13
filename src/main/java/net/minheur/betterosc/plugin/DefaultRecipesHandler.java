@@ -1,7 +1,6 @@
 package net.minheur.betterosc.plugin;
 
 import net.minheur.betterosc.Betterosc;
-import net.minheur.betterosc.mixin.RecipePathAccessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +11,9 @@ import java.nio.file.Path;
 import java.util.List;
 
 public final class DefaultRecipesHandler {
-    private static final Path RECIPE_FOLDER = RecipePathAccessor.osc$RECIPE_FOLDER().resolve("betterOSC");
+    private static final Path RECIPE_FOLDER =
+            net.minheur.commandcrafter.crafts.DefaultRecipesHandler
+                    .RECIPE_FOLDER.resolve("betterOSC");
     private static final Logger LOGGER = LoggerFactory.getLogger(Betterosc.MODID + "/crafter");
 
     public static final List<String> DEFAULT_RECIPES = List.of(
