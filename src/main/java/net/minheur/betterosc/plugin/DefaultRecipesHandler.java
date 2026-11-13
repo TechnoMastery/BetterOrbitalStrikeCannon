@@ -1,6 +1,9 @@
 package net.minheur.betterosc.plugin;
 
+import net.minheur.betterosc.Betterosc;
 import net.minheur.betterosc.mixin.RecipePathAccessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,6 +13,7 @@ import java.util.List;
 
 public final class DefaultRecipesHandler {
     private static final Path RECIPE_FOLDER = RecipePathAccessor.osc$RECIPE_FOLDER().resolve("betterOSC");
+    private static final Logger LOGGER = LoggerFactory.getLogger(Betterosc.MODID + "/crafter");
 
     public static final List<String> DEFAULT_RECIPES = List.of(
             "README.md",
@@ -37,7 +41,7 @@ public final class DefaultRecipesHandler {
                 try {
                     Files.createDirectories(output.getParent());
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    LOGGER.error("Failed to create recipe folder", e);
                     return;
                 }
 
@@ -48,12 +52,12 @@ public final class DefaultRecipesHandler {
                     }
                     Files.copy(source, output);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    LOGGER.error("Failed to copy files", e);
                 }
             });
 
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("A file writing error happened", e);
         }
     }
 
