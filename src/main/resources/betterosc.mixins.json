@@ -4,8 +4,7 @@
   "package": "net.minheur.betterosc.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "LivingEntityMixin",
-    "RecipePathAccessor"
+    "LivingEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1
